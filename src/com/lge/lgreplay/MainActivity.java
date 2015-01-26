@@ -60,13 +60,13 @@ public class MainActivity extends Activity {
 
     private void enableReplayPanel() {
         mEnableReplayPanel = true;
-        startService(new Intent(this, LGReplayService.class));
+        startService(new Intent(this, ReplayService.class));
         mToggleReplayPanelButton.setText(R.string.disable_replay_panel);
     }
 
     private void disableReplayPanel() {
         mEnableReplayPanel = false;
-        stopService(new Intent(this, LGReplayService.class));
+        stopService(new Intent(this, ReplayService.class));
         mToggleReplayPanelButton.setText(R.string.enable_replay_panel);
     }
 }

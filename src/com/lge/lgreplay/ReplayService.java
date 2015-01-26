@@ -28,7 +28,7 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LGReplayService extends Service {
+public class ReplayService extends Service {
     private static final String TAG = "LGReplayService";
 
     private View mReplayPanelView = null;

@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         
-        <service android:name=".LGReplayService" android:exported="false"/>
+        <service android:name=".ReplayService" android:exported="false"/>
     </application>
 
 </manifest>

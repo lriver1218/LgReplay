@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.lge.lgreplay.event.Event;
+import com.lge.lgreplay.event.EventActivity;
 import com.lge.lgreplay.event.EventKey;
 import com.lge.lgreplay.event.EventSleep;
 import com.lge.lgreplay.event.EventTouch;

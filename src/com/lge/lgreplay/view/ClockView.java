@@ -1,5 +1,5 @@
 
-package com.lge.lgreplay;
+package com.lge.lgreplay.view;
 
 import android.content.Context;
 import android.os.Handler;
