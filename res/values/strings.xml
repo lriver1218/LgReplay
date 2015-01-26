@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">LGReplay</string>
+    <string name="open_precondition_file">Open Precondition File</string>
+    <string name="open_replay_file">Open Replay File (.rep, main.log, kernel.log)</string>
+    <string name="save_replay_file">Save Replay File (.rep)</string>
+    <string name="set_starting_time">Set Starting Time</string>
+    <string name="enable_replay_panel">Enable Replay Panel</string>
+    <string name="disable_replay_panel">Disable Replay Panel</string>
+
+</resources>

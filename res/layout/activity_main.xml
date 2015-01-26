@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:gravity="center_vertical"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/open_precondition_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/open_precondition_file" />
+
+    <Button
+        android:id="@+id/open_replay_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/open_replay_file" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <Button
+        android:id="@+id/set_starting_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/set_starting_time" />
+
+    <Button
+        android:id="@+id/toggle_replay_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_replay_panel" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <Button
+        android:id="@+id/save_replay_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_replay_file" />
+
+</LinearLayout>
