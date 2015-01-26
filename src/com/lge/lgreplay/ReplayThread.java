@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.lge.lgreplay.event.Event;
 import com.lge.lgreplay.event.EventKey;
+import com.lge.lgreplay.event.EventSleep;
 import com.lge.lgreplay.event.EventTouch;
 
 public class ReplayThread extends Thread {
@@ -58,7 +59,7 @@ public class ReplayThread extends Thread {
             for (Event event : mEvents) {
                 if (event.getType() == Event.TYPE_SLEEP) {
                     try {
-                        sleep(event.getSleepTime());
+                        sleep(((EventSleep)event).getSleepTime());
                     } catch (InterruptedException e) {
                     }
                 } else if (event.getType() == Event.TYPE_TOUCH) {

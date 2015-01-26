@@ -8,7 +8,6 @@ public abstract class Event {
     public static final int TYPE_ACTIVITY = 3;
 
     private int mType;
-    private long mSleepTime;
 
     public void setType(int type) {
         mType = type;
@@ -16,13 +15,5 @@ public abstract class Event {
 
     public int getType() {
         return mType;
-    }
-
-    public void setSleepTime(long sleepTime) {
-        mSleepTime = sleepTime;
-    }
-
-    public long getSleepTime() {
-        return mSleepTime;
     }
 }
