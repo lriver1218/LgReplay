@@ -11,44 +11,48 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.lge.lgreplay.event.Event;
 import com.lge.lgreplay.event.EventKey;
 import com.lge.lgreplay.event.EventSleep;
 import com.lge.lgreplay.event.EventTouch;
+import com.lge.lgreplay.view.ReplayPanelView;
 
 import java.util.LinkedList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ReplayService extends Service {
     private static final String TAG = "LGReplayService";
 
-    private View mReplayPanelView = null;
-    private WindowManager mWindowManager;
+    public static final int MESSAGE_START = 0;
+    public static final int MESSAGE_STOP = 1;
+    public static final int MESSAGE_PAUSE = 2;
+    public static final int MESSAGE_RESUME = 3;
+    public static final int MESSAGE_SPEED = 4;
+    public static final int MESSAGE_FINISH = 5;
 
-    private boolean mIsRecording = false;
-    private ImageButton mReplayButton;
+    private ReplayPanelView mReplayPanelView = null;
+    private WindowManager mWindowManager;
 
     private com.lge.lgreplay.ReplayThread mReplayThread;
 
     final Handler mHandler = new Handler() {
         public void handleMessage(Message message) {
-            String state = (String) message.getData().get("state");
-            if("finish".equals(state)) {
+            if (message.what == MESSAGE_START) {
+                startReplay();
+            } else if (message.what == MESSAGE_STOP) {
+                stopReplay();
+            } else if (message.what == MESSAGE_PAUSE) {
+                
+            } else if (message.what == MESSAGE_RESUME) {
+                
+            } else if (message.what == MESSAGE_SPEED) {
+                
+            } else if (message.what == MESSAGE_FINISH) {
                 stopReplay();
             }
         }
     };
-
-    private TextView mTouchTextView;
 
     private Context mContext;
 
@@ -62,18 +66,7 @@ public class ReplayService extends Service {
     }
 
     private void initViews() {
-        LayoutInflater li = (LayoutInflater) mContext
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        mReplayPanelView = (LinearLayout) li.inflate(R.layout.replay_panel, null);
-        mReplayButton = (ImageButton) mReplayPanelView.findViewById(R.id.replay_button);
-        mReplayButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleReplay();
-            }
-        });
-        mTouchTextView = (TextView) mReplayPanelView.findViewById(R.id.touch_text);
+        mReplayPanelView = new ReplayPanelView(mContext, mHandler);
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -94,19 +87,7 @@ public class ReplayService extends Service {
         mWindowManager.addView(mReplayPanelView, params);
     }
 
-    private void toggleReplay() {
-        if (!mIsRecording) {
-            startReplay();
-        } else {
-            stopReplay();
-        }
-    }
-
     private void startReplay() {
-        Log.d("XXX", "startReplay");
-        mIsRecording = true;
-        mReplayButton.setImageResource(R.drawable.stop_replay_button);
-
         LinkedList<Event> replayList = new LinkedList<Event>();
         
         addDummpyList(replayList); // for test
@@ -134,37 +115,15 @@ public class ReplayService extends Service {
         replayList.add(new EventTouch(1261, 2206, EventTouch.ACTION_UP));
         replayList.add(new EventSleep(1000));
         
-        replayList.add(new EventKey(KeyEvent.KEYCODE_HOME));
+        replayList.add(new EventKey(KeyEvent.KEYCODE_HOME, KeyEvent.ACTION_DOWN, 0));
+        replayList.add(new EventKey(KeyEvent.KEYCODE_HOME, KeyEvent.ACTION_UP, 0));
     }
 
     private void stopReplay() {
-        Log.d("XXX", "stopReplay");
-        mIsRecording = false;
-
+        mReplayPanelView.setStopImage();
         if (mReplayThread != null) {
             mReplayThread.setStop();
         }
-
-        mReplayButton.setImageResource(R.drawable.start_replay_button);
-    }
-
-    // x[0]=773.5, y[0]=1387.0
-
-    private void parseLog(String line) {
-        Pattern pattern = Pattern.compile("[xy]\\[\\d\\]=\\d+.\\d+");
-        Matcher m = pattern.matcher(line);
-        int x = 0;
-        int y = 0;
-
-        StringBuilder builder = new StringBuilder();
-        if (m.find()) {
-            builder.append(m.group(0));
-        }
-
-        if (m.find()) {
-            builder.append(m.group(0));
-        }
-        mTouchTextView.setText(builder.toString());
     }
 
     @Override

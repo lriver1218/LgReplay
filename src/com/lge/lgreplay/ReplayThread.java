@@ -40,10 +40,10 @@ import com.lge.lgreplay.event.EventSleep;
 import com.lge.lgreplay.event.EventTouch;
 
 public class ReplayThread extends Thread {
-	final int ACTION_TOUCH_UI_SHOW = 0;
-	final int ACTION_TOUCH_UI_HIDE = 1;
-	final int ACTION_TOUCH_UI_UPDATE = 2;
-	
+    final int ACTION_TOUCH_UI_SHOW = 0;
+    final int ACTION_TOUCH_UI_HIDE = 1;
+    final int ACTION_TOUCH_UI_UPDATE = 2;
+    
     private Context mContext;
     private Handler mHandler = null;
     private LinkedList<Event> mEvents;
@@ -60,23 +60,23 @@ public class ReplayThread extends Thread {
     private IActivityManager mActivityManager;
     
     private Handler mUiHandler = new Handler() {
-    	public void handleMessage(Message msg) {
-    		switch(msg.arg1) {
-    		case ACTION_TOUCH_UI_SHOW:
-    			mTouchView.setImageAlpha(255);
-    			break;
-    			
-    		case ACTION_TOUCH_UI_HIDE:
-    			mTouchView.setImageAlpha(0);
-    			break;
-    			
-    		case ACTION_TOUCH_UI_UPDATE:
-    			mWindowManager.updateViewLayout(mTouchView, params);
-    			break;
-    		default:
-    			break;
-    		}
-    	}
+        public void handleMessage(Message msg) {
+            switch(msg.arg1) {
+            case ACTION_TOUCH_UI_SHOW:
+                mTouchView.setImageAlpha(255);
+                break;
+                
+            case ACTION_TOUCH_UI_HIDE:
+                mTouchView.setImageAlpha(0);
+                break;
+                
+            case ACTION_TOUCH_UI_UPDATE:
+                mWindowManager.updateViewLayout(mTouchView, params);
+                break;
+            default:
+                break;
+            }
+        }
     };
 
     ReplayThread(Context context, Handler handler, LinkedList<Event> events) {
@@ -149,7 +149,7 @@ public class ReplayThread extends Thread {
                         showActivityIsDifferent();
                     }
                 } else if (event.getType() == Event.TYPE_ORIENTATION) {
-                	replayOrientation((EventOrientation) event);
+                    replayOrientation((EventOrientation) event);
                 }
 
                 if (mIsStop) {
@@ -162,52 +162,52 @@ public class ReplayThread extends Thread {
             }
         }
         
-        sendMessage();
+        sendFinishMessage();
     }
 
     private void replayTouch(EventTouch touchEvent) {
         // mInstrumentation.sendPointerSync(MotionEvent.obtain(SystemClock.uptimeMillis(),
         // SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, pozx, pozy, 0));
 
-    	params.x = (int)touchEvent.getX();
-    	params.y = (int)touchEvent.getY();
-    	sendUiMessage(ACTION_TOUCH_UI_UPDATE);
-    	
-    	if (touchEvent.getAction()==MotionEvent.ACTION_DOWN) {
-    		sendUiMessage(ACTION_TOUCH_UI_SHOW);
-    	} else {
-    		sendUiMessage(ACTION_TOUCH_UI_HIDE);
-    	}
+        params.x = (int)touchEvent.getX();
+        params.y = (int)touchEvent.getY();
+        sendUiMessage(ACTION_TOUCH_UI_UPDATE);
+        
+        if (touchEvent.getAction()==MotionEvent.ACTION_DOWN) {
+            sendUiMessage(ACTION_TOUCH_UI_SHOW);
+        } else {
+            sendUiMessage(ACTION_TOUCH_UI_HIDE);
+        }
         mInstrumentation.sendPointerSync(MotionEvent.obtain(SystemClock.uptimeMillis(),
                 SystemClock.uptimeMillis(), touchEvent.getAction(), touchEvent.getX(),
                 touchEvent.getY(), 0));
-    	
-//    	MotionEvent event = MotionEvent.obtain(SystemClock.uptimeMillis(),
+        
+//      MotionEvent event = MotionEvent.obtain(SystemClock.uptimeMillis(),
 //              SystemClock.uptimeMillis(), touchEvent.getAction(), touchEvent.getX(),
 //              touchEvent.getY(), 0);
-//    	if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) == 0) {
+//      if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) == 0) {
 //            event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
 //        }
-//    	InputManager.getInstance().injectInputEvent(event,
-//	            InputManager.INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH);
+//      InputManager.getInstance().injectInputEvent(event,
+//              InputManager.INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH);
     }
 
     private void replayKey(EventKey keyEvent) {
         // mInstrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_B);
         //mInstrumentation.sendKeyDownUpSync(event.getKey());
 
-    	long when = SystemClock.uptimeMillis();
-		final KeyEvent event = new KeyEvent(when, when, keyEvent.getAction(), keyEvent.getKey(), keyEvent.getRepeat(),
+        long when = SystemClock.uptimeMillis();
+        final KeyEvent event = new KeyEvent(when, when, keyEvent.getAction(), keyEvent.getKey(), keyEvent.getRepeat(),
                 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
                 KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY | KeyEvent.FLAG_FALLBACK,
                 InputDevice.SOURCE_KEYBOARD);
-		InputManager.getInstance().injectInputEvent(event,
-	            InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
+        InputManager.getInstance().injectInputEvent(event,
+                InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
     }
     
     private void replayOrientation(EventOrientation orientationEvent) {
-    	params.screenOrientation = orientationEvent.getOrientation();
-    	sendUiMessage(ACTION_TOUCH_UI_UPDATE);
+        params.screenOrientation = orientationEvent.getOrientation();
+        sendUiMessage(ACTION_TOUCH_UI_UPDATE);
     }
 
     private boolean checkActivity(EventActivity event) {
@@ -219,17 +219,13 @@ public class ReplayThread extends Thread {
         Toast.makeText(mContext, "Activity is diffrent of log", Toast.LENGTH_SHORT).show();
     }
 
-    private void sendMessage() {
-        Message message = mHandler.obtainMessage();
-        Bundle data = new Bundle();
-        data.putString("state", "finish");
-        message.setData(data);
-        mHandler.sendMessage(message);
+    private void sendFinishMessage() {
+        mHandler.sendEmptyMessage(ReplayService.MESSAGE_FINISH);
     }
     
     private void sendUiMessage(int status) {
-    	Message message = mUiHandler.obtainMessage();
-    	message.arg1 = status;
-    	mUiHandler.sendMessage(message);
+        Message message = mUiHandler.obtainMessage();
+        message.arg1 = status;
+        mUiHandler.sendMessage(message);
     }
 }
