@@ -1,14 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lge.lgreplay"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0"
+    android:sharedUserId="android.uid.system" >
 
     <uses-sdk
         android:minSdkVersion="21"
         android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.INJECT_EVENTS" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
     
     <application
         android:allowBackup="true"

@@ -6,6 +6,7 @@ public abstract class Event {
     public static final int TYPE_TOUCH = 1;
     public static final int TYPE_KEY = 2;
     public static final int TYPE_ACTIVITY = 3;
+    public static final int TYPE_ORIENTATION = 4;
 
     private int mType;
 
