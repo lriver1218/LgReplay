@@ -4,6 +4,7 @@ package com.lge.lgreplay;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
@@ -15,6 +16,7 @@ import android.view.WindowManager;
 
 import com.lge.lgreplay.event.Event;
 import com.lge.lgreplay.event.EventKey;
+import com.lge.lgreplay.event.EventOrientation;
 import com.lge.lgreplay.event.EventSleep;
 import com.lge.lgreplay.event.EventTouch;
 import com.lge.lgreplay.view.ReplayPanelView;
@@ -34,7 +36,7 @@ public class ReplayService extends Service {
     private ReplayPanelView mReplayPanelView = null;
     private WindowManager mWindowManager;
 
-    private com.lge.lgreplay.ReplayThread mReplayThread;
+    private ReplayThread mReplayThread;
 
     final Handler mHandler = new Handler() {
         public void handleMessage(Message message) {
@@ -93,30 +95,39 @@ public class ReplayService extends Service {
         addDummpyList(replayList); // for test
         
         mReplayThread = new ReplayThread(mContext, mHandler, replayList);
-        mReplayThread.setLoop(false); // TODO: for test
+        //mReplayThread.setLoop(true); // TODO: for test
         mReplayThread.start();
     }
 
     private void addDummpyList(LinkedList<Event> replayList) {
         // for test
-        replayList.add(new EventTouch(252, 1902, EventTouch.ACTION_DOWN));
-        replayList.add(new EventTouch(252, 1902, EventTouch.ACTION_UP));
+    	TimeInfo time = new TimeInfo();
+    	time.set(274, 35, 12, 14, 26, 1);
+        replayList.add(new EventTouch(985, 1330, EventTouch.ACTION_DOWN, time));
+        replayList.add(new EventSleep(250));
+        replayList.add(new EventTouch(998, 1325, EventTouch.ACTION_UP, time));
+        replayList.add(new EventSleep(2000));
+        
+        replayList.add(new EventTouch(633, 1129, EventTouch.ACTION_DOWN, time));
+        replayList.add(new EventSleep(200));
+        replayList.add(new EventTouch(633, 1129, EventTouch.ACTION_UP, time));
         replayList.add(new EventSleep(1000));
         
-        replayList.add(new EventTouch(1248, 1936, EventTouch.ACTION_DOWN));
-        replayList.add(new EventTouch(1248, 1936, EventTouch.ACTION_UP));
-        replayList.add(new EventSleep(1000));
+        replayList.add(new EventTouch(580, 861, EventTouch.ACTION_DOWN, time));
+        replayList.add(new EventSleep(100));
+        replayList.add(new EventTouch(580, 861, EventTouch.ACTION_UP, time));
+        replayList.add(new EventSleep(2000));
         
-        replayList.add(new EventTouch(252, 1902, EventTouch.ACTION_DOWN));
-        replayList.add(new EventTouch(252, 1902, EventTouch.ACTION_UP));
+        replayList.add(new EventOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, time));
+        replayList.add(new EventSleep(3000));
+        replayList.add(new EventOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, time));
+        replayList.add(new EventSleep(2000));
+    	
+        replayList.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_DOWN, 0, time));
+        replayList.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_UP, 0, time));
         replayList.add(new EventSleep(1000));
-        
-        replayList.add(new EventTouch(1261, 2206, EventTouch.ACTION_DOWN));
-        replayList.add(new EventTouch(1261, 2206, EventTouch.ACTION_UP));
-        replayList.add(new EventSleep(1000));
-        
-        replayList.add(new EventKey(KeyEvent.KEYCODE_HOME, KeyEvent.ACTION_DOWN, 0));
-        replayList.add(new EventKey(KeyEvent.KEYCODE_HOME, KeyEvent.ACTION_UP, 0));
+        replayList.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_DOWN, 0, time));
+        replayList.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_UP, 0, time));
     }
 
     private void stopReplay() {

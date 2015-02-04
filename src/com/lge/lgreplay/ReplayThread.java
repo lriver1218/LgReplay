@@ -7,29 +7,16 @@ import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
 import android.app.Instrumentation;
 import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.PixelFormat;
 import android.hardware.input.InputManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.RemoteException;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.WindowManager;
-import android.view.View.OnClickListener;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lge.lgreplay.event.Event;
@@ -38,19 +25,23 @@ import com.lge.lgreplay.event.EventKey;
 import com.lge.lgreplay.event.EventOrientation;
 import com.lge.lgreplay.event.EventSleep;
 import com.lge.lgreplay.event.EventTouch;
+import com.lge.lgreplay.view.TouchView;
 
 public class ReplayThread extends Thread {
     final int ACTION_TOUCH_UI_SHOW = 0;
     final int ACTION_TOUCH_UI_HIDE = 1;
-    final int ACTION_TOUCH_UI_UPDATE = 2;
+    final int ACTION_KEY_UI_SHOW = 3;
+    final int ACTION_KEY_UI_HIDE = 4;
+    final int ACTION_SET_TOUCH_SPOT = 5;
+    final int ACTION_SET_KEY_NAME = 6;
+    final int ACTION_SET_ORIENTATION = 7;
+    final int ACTION_EXIT = 10;
     
     private Context mContext;
     private Handler mHandler = null;
     private LinkedList<Event> mEvents;
     
-    private ImageView mTouchView = null;
-    WindowManager.LayoutParams params;
-    private WindowManager mWindowManager;
+    private TouchView mTouchView = null;
 
     private Instrumentation mInstrumentation;
 
@@ -63,16 +54,37 @@ public class ReplayThread extends Thread {
         public void handleMessage(Message msg) {
             switch(msg.arg1) {
             case ACTION_TOUCH_UI_SHOW:
-                mTouchView.setImageAlpha(255);
+                mTouchView.setTouchSpotVisibility(true);
                 break;
                 
             case ACTION_TOUCH_UI_HIDE:
-                mTouchView.setImageAlpha(0);
+            	mTouchView.setTouchSpotVisibility(false);
                 break;
                 
-            case ACTION_TOUCH_UI_UPDATE:
-                mWindowManager.updateViewLayout(mTouchView, params);
+            case ACTION_KEY_UI_SHOW:
+                mTouchView.setKeyVisibility(true);
                 break;
+                
+            case ACTION_KEY_UI_HIDE:
+                mTouchView.setKeyVisibility(false);
+                break;
+                
+            case ACTION_SET_TOUCH_SPOT:
+                mTouchView.setTouchSpot(msg.getData().getInt("x"), msg.getData().getInt("y"));
+                break;
+                
+            case ACTION_SET_KEY_NAME:
+                // Todo
+                break;
+                
+            case ACTION_SET_ORIENTATION:
+                mTouchView.setOrientation(msg.getData().getInt("orientation"));
+                break;
+                
+            case ACTION_EXIT:
+                mTouchView.stopView();
+                break;
+                
             default:
                 break;
             }
@@ -86,7 +98,7 @@ public class ReplayThread extends Thread {
 
         mInstrumentation = new Instrumentation();
         mActivityManager = ActivityManagerNative.getDefault();
-        initViews();
+        mTouchView = new TouchView(context);
     }
 
     public void setLoop(boolean isLoop) {
@@ -95,33 +107,8 @@ public class ReplayThread extends Thread {
 
     public void setStop() {
         mIsStop = true;
-        mWindowManager.removeView(mTouchView);
     }
     
-    private void initViews() {
-        mTouchView = new ImageView(mContext);
-        mTouchView.setImageResource(R.drawable.ic_replay);
-
-        params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PRIORITY_PHONE, // WindowManager.LayoutParams.TYPE_PRIORITY_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
-                WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
-                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-                PixelFormat.TRANSLUCENT);
-        params.gravity = Gravity.TOP | Gravity.LEFT;
-        params.setTitle("LGReplayTouchView");
-        sendUiMessage(ACTION_TOUCH_UI_HIDE);
-
-        mWindowManager = (WindowManager) mContext.getSystemService(mContext.WINDOW_SERVICE);
-        mWindowManager.addView(mTouchView, params);
-    }
-
     @Override
     public void run() {
         Log.d("XXX", "run");
@@ -161,7 +148,7 @@ public class ReplayThread extends Thread {
                 break;
             }
         }
-        
+        sendUiMessage(ACTION_EXIT);
         sendFinishMessage();
     }
 
@@ -169,9 +156,10 @@ public class ReplayThread extends Thread {
         // mInstrumentation.sendPointerSync(MotionEvent.obtain(SystemClock.uptimeMillis(),
         // SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, pozx, pozy, 0));
 
-        params.x = (int)touchEvent.getX();
-        params.y = (int)touchEvent.getY();
-        sendUiMessage(ACTION_TOUCH_UI_UPDATE);
+        Bundle data = new Bundle();
+        data.putInt("x", (int)touchEvent.getX());
+        data.putInt("y", (int)touchEvent.getY());
+        sendUiMessageWithData(ACTION_SET_TOUCH_SPOT, data);
         
         if (touchEvent.getAction()==MotionEvent.ACTION_DOWN) {
             sendUiMessage(ACTION_TOUCH_UI_SHOW);
@@ -206,8 +194,9 @@ public class ReplayThread extends Thread {
     }
     
     private void replayOrientation(EventOrientation orientationEvent) {
-        params.screenOrientation = orientationEvent.getOrientation();
-        sendUiMessage(ACTION_TOUCH_UI_UPDATE);
+        Bundle data = new Bundle();
+        data.putInt("orientation", orientationEvent.getOrientation());
+        sendUiMessageWithData(ACTION_SET_ORIENTATION, data);
     }
 
     private boolean checkActivity(EventActivity event) {
@@ -226,6 +215,13 @@ public class ReplayThread extends Thread {
     private void sendUiMessage(int status) {
         Message message = mUiHandler.obtainMessage();
         message.arg1 = status;
+        mUiHandler.sendMessage(message);
+    }
+    
+    private void sendUiMessageWithData(int status, Bundle data) {
+        Message message = mUiHandler.obtainMessage();
+        message.arg1 = status;
+        message.setData(data);
         mUiHandler.sendMessage(message);
     }
 }

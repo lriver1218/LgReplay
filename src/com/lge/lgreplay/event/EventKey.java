@@ -1,6 +1,8 @@
 
 package com.lge.lgreplay.event;
 
+import com.lge.lgreplay.TimeInfo;
+
 public class EventKey extends Event {
 	public static final int ACTION_DOWN = 0;
     public static final int ACTION_UP = 1;
@@ -10,8 +12,9 @@ public class EventKey extends Event {
     int mAction;
     int mRepeat;
 
-    public EventKey(int key, int action, int repeat) {
+    public EventKey(int key, int action, int repeat, TimeInfo time) {
         setType(TYPE_KEY);
+        setTime(time);
 
         mKey = key;
         mAction = action;

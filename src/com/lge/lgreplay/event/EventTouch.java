@@ -1,6 +1,8 @@
 
 package com.lge.lgreplay.event;
 
+import com.lge.lgreplay.TimeInfo;
+
 public class EventTouch extends Event {
     public static final int ACTION_DOWN = 0;
     public static final int ACTION_UP = 1;
@@ -13,8 +15,9 @@ public class EventTouch extends Event {
     private int[] mX;
     private int[] mY;
 
-    public EventTouch(int x, int y, int action) {
+    public EventTouch(int x, int y, int action, TimeInfo time) {
         setType(TYPE_TOUCH);
+        setTime(time);
 
         mX = new int[1];
         mY = new int[1];
