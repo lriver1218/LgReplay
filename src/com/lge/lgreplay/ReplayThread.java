@@ -100,7 +100,7 @@ public class ReplayThread extends Thread {
     
     private void initViews() {
         mTouchView = new ImageView(mContext);
-        mTouchView.setImageResource(R.drawable.ic_record);
+        mTouchView.setImageResource(R.drawable.ic_replay);
 
         params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
