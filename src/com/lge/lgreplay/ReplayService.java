@@ -2,10 +2,12 @@
 package com.lge.lgreplay;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -32,11 +34,17 @@ public class ReplayService extends Service {
     public static final int MESSAGE_RESUME = 3;
     public static final int MESSAGE_SPEED = 4;
     public static final int MESSAGE_FINISH = 5;
+    public static final int MESSAGE_NOW_ACTIVITY = 6;
 
     private ReplayPanelView mReplayPanelView = null;
     private WindowManager mWindowManager;
 
+    private Context mContext;
+
+    private LogThread mLogThread;
     private ReplayThread mReplayThread;
+
+    private ComponentName mCurrentActivity;
 
     final Handler mHandler = new Handler() {
         public void handleMessage(Message message) {
@@ -45,18 +53,18 @@ public class ReplayService extends Service {
             } else if (message.what == MESSAGE_STOP) {
                 stopReplay();
             } else if (message.what == MESSAGE_PAUSE) {
-                
+
             } else if (message.what == MESSAGE_RESUME) {
-                
+
             } else if (message.what == MESSAGE_SPEED) {
-                
+
             } else if (message.what == MESSAGE_FINISH) {
                 stopReplay();
+            } else if (message.what == MESSAGE_NOW_ACTIVITY) {
+                setCurrentActivity((ComponentName) message.obj);
             }
         }
     };
-
-    private Context mContext;
 
     @Override
     public void onCreate() {
@@ -65,6 +73,9 @@ public class ReplayService extends Service {
         mContext = getBaseContext();
 
         initViews();
+
+        mLogThread = new LogThread(mHandler);
+        mLogThread.start();
     }
 
     private void initViews() {
@@ -91,38 +102,38 @@ public class ReplayService extends Service {
 
     private void startReplay() {
         LinkedList<Event> replayList = new LinkedList<Event>();
-        
+
         addDummpyList(replayList); // for test
-        
+
         mReplayThread = new ReplayThread(mContext, mHandler, replayList);
-        //mReplayThread.setLoop(true); // TODO: for test
+        // mReplayThread.setLoop(true); // TODO: for test
         mReplayThread.start();
     }
 
     private void addDummpyList(LinkedList<Event> replayList) {
         // for test
-    	TimeInfo time = new TimeInfo();
-    	time.set(274, 35, 12, 14, 26, 1);
+        TimeInfo time = new TimeInfo();
+        time.set(274, 35, 12, 14, 26, 1);
         replayList.add(new EventTouch(985, 1330, EventTouch.ACTION_DOWN, time));
         replayList.add(new EventSleep(250));
         replayList.add(new EventTouch(998, 1325, EventTouch.ACTION_UP, time));
         replayList.add(new EventSleep(2000));
-        
+
         replayList.add(new EventTouch(633, 1129, EventTouch.ACTION_DOWN, time));
         replayList.add(new EventSleep(200));
         replayList.add(new EventTouch(633, 1129, EventTouch.ACTION_UP, time));
         replayList.add(new EventSleep(1000));
-        
+
         replayList.add(new EventTouch(580, 861, EventTouch.ACTION_DOWN, time));
         replayList.add(new EventSleep(100));
         replayList.add(new EventTouch(580, 861, EventTouch.ACTION_UP, time));
         replayList.add(new EventSleep(2000));
-        
+
         replayList.add(new EventOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, time));
         replayList.add(new EventSleep(3000));
         replayList.add(new EventOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, time));
         replayList.add(new EventSleep(2000));
-    	
+
         replayList.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_DOWN, 0, time));
         replayList.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_UP, 0, time));
         replayList.add(new EventSleep(1000));
@@ -141,6 +152,7 @@ public class ReplayService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
+        mLogThread.setStop();
         if (mReplayPanelView != null) {
             mWindowManager.removeView(mReplayPanelView);
             mReplayPanelView = null;
@@ -150,5 +162,13 @@ public class ReplayService extends Service {
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
+    }
+
+    public void setCurrentActivity(ComponentName currentActivity) {
+        mCurrentActivity = currentActivity;
+    }
+
+    public ComponentName getCurrentActivity() {
+        return mCurrentActivity;
     }
 }
