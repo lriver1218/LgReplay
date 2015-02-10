@@ -7,5 +7,7 @@
     <string name="set_starting_time">Set Starting Time</string>
     <string name="enable_replay_panel">Enable Replay Panel</string>
     <string name="disable_replay_panel">Disable Replay Panel</string>
+    
+    <string name="replay">Replay</string>
 
 </resources>

@@ -1,9 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/recording"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="end"
     android:orientation="vertical" >
 
     <com.lge.lgreplay.view.ClockView
@@ -18,12 +17,15 @@
         android:id="@+id/replay_button"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:contentDescription="Recording"
-        android:background="@drawable/start_replay_button" />
-    <TextView
-        android:id="@+id/touch_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black" />
+        android:background="@drawable/start_replay_button"
+        android:contentDescription="@string/replay" />
+
+    <ImageButton
+        android:id="@+id/replay_ball"
+        android:layout_width="10dp"
+        android:layout_height="40dp"
+        android:background="@drawable/ic_replay_ball"
+        android:visibility="gone"
+        />
 
 </LinearLayout>
