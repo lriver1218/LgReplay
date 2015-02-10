@@ -48,7 +48,9 @@ public class ReplayService extends Service {
     private ReplayThread mReplayThread;
 
     private ComponentName mCurrentActivity;
-
+    private static LinkedList<Event> replayList = null;
+    
+    
     final Handler mHandler = new Handler() {
         public void handleMessage(Message message) {
             if (message.what == MESSAGE_START) {
@@ -107,44 +109,9 @@ public class ReplayService extends Service {
     }
 
     private void startReplay() {
-        LinkedList<Event> replayList = new LinkedList<Event>();
-
-        addDummpyList(replayList); // for test
-
         mReplayThread = new ReplayThread(mContext, mHandler, replayList);
         // mReplayThread.setLoop(true); // TODO: for test
         mReplayThread.start();
-    }
-
-    private void addDummpyList(LinkedList<Event> replayList) {
-        // for test
-        TimeInfo time = new TimeInfo();
-        time.set(274, 35, 12, 14, 26, 1);
-        replayList.add(new EventTouch(985, 1330, EventTouch.ACTION_DOWN, time));
-        replayList.add(new EventSleep(250));
-        replayList.add(new EventTouch(998, 1325, EventTouch.ACTION_UP, time));
-        replayList.add(new EventSleep(2000));
-
-        replayList.add(new EventTouch(633, 1129, EventTouch.ACTION_DOWN, time));
-        replayList.add(new EventSleep(200));
-        replayList.add(new EventTouch(633, 1129, EventTouch.ACTION_UP, time));
-        replayList.add(new EventSleep(1000));
-
-        replayList.add(new EventTouch(580, 861, EventTouch.ACTION_DOWN, time));
-        replayList.add(new EventSleep(100));
-        replayList.add(new EventTouch(580, 861, EventTouch.ACTION_UP, time));
-        replayList.add(new EventSleep(2000));
-
-        replayList.add(new EventOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, time));
-        replayList.add(new EventSleep(3000));
-        replayList.add(new EventOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, time));
-        replayList.add(new EventSleep(2000));
-
-        replayList.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_DOWN, 0, time));
-        replayList.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_UP, 0, time));
-        replayList.add(new EventSleep(1000));
-        replayList.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_DOWN, 0, time));
-        replayList.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_UP, 0, time));
     }
 
     private void stopReplay() {
@@ -176,5 +143,9 @@ public class ReplayService extends Service {
 
     public ComponentName getCurrentActivity() {
         return mCurrentActivity;
+    }
+    
+    public static void setReplayList(LinkedList<Event> rpList) {
+    	replayList = rpList;
     }
 }

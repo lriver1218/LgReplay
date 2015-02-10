@@ -128,6 +128,7 @@ public class MainActivity extends Activity {
 	        addDummpyList(replayList); // for test
 	        ReplayService.setReplayList(replayList);
 		}
+		
 		public void onFileSelected(Dialog source, File folder, String name) {
 			source.hide();
 			Toast toast = Toast.makeText(MainActivity.this, "File created: " + folder.getName() + "/" + name, Toast.LENGTH_LONG);
