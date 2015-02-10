@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="lib" path="Z:/z2_mp_kr_skt/android/out-z2_skt_kr/target/common/obj/JAVA_LIBRARIES/framework_intermediates/classes-full-debug.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/g4_framework"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/framework"/>
