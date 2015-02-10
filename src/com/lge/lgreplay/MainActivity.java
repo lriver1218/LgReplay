@@ -70,14 +70,13 @@ public class MainActivity extends Activity {
 		// Create the dialog.
 		FileChooserDialog dialog = new FileChooserDialog(this);
 		
+		dialog.setCanCreateFiles(true);
+		dialog.setFilter(".*rep|.*log|.*log.*");
 		// folder location - temporary
 		dialog.loadFolder(Environment.getExternalStorageDirectory() + "/Download/");
-		
 		// Assign listener for the select event.
 		dialog.addListener(this.onFileSelectedListener);
-		
-		// Show the dialog.
-        dialog.show();
+		dialog.show();
     }
 
     // rev 1 : dialog  
