@@ -131,7 +131,6 @@ public class MainActivity extends Activity {
         // TODO folder location - temporary
         dialog.loadFolder(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
-        dialog.setShowConfirmation(true, false);
         dialog.addListener(this.onFileSelectedListener);
         dialog.show();
     }
