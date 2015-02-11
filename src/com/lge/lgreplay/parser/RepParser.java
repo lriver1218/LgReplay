@@ -1,4 +1,3 @@
-
 package com.lge.lgreplay.parser;
 
 import android.content.pm.ActivityInfo;
@@ -11,15 +10,38 @@ import com.lge.lgreplay.event.EventOrientation;
 import com.lge.lgreplay.event.EventSleep;
 import com.lge.lgreplay.event.EventTouch;
 
+import java.io.*;
+import java.util.*;
 import java.io.File;
 import java.util.LinkedList;
 
 public class RepParser {
+
+    static final String TOUCH_KEYWORD = "[IE][Touch]";
+    static final String KEY_KEYWORD = "[IE][Key]";
+    static final String ORIENTATION_KEYWORD = "[IE][Orientation]";
+
     public LinkedList<Event> parseFileToList(File file) {
         LinkedList<Event> list = new LinkedList<Event>();
 
+        FileReader in = null; 
+
+        try {
+            BufferedReader br =  new BufferedReader(in = new FileReader(file));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                Event event = null;
+                event = parse(line);
+                if (event != null) {
+                    list.add(event);
+                }
+            }
+            in.close();
+        } catch( IOException e){}
+
         // TODO for test
-        TimeInfo time = new TimeInfo();
+        /*TimeInfo time = new TimeInfo();
         time.set(274, 35, 12, 14, 26, 1);
         list.add(new EventTouch(985, 1330, EventTouch.ACTION_DOWN, time));
         list.add(new EventSleep(250));
@@ -45,8 +67,112 @@ public class RepParser {
         list.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_UP, 0, time));
         list.add(new EventSleep(1000));
         list.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_DOWN, 0, time));
-        list.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_UP, 0, time));
+        list.add(new EventKey(KeyEvent.KEYCODE_POWER, KeyEvent.ACTION_UP, 0, time));*/
 
         return list;
+    }    
+
+    public Event parse(String line) {
+        Event event = null;
+        if (line.contains(TOUCH_KEYWORD)) {
+            event = parseTouchEvent(line);
+        } else if (line.contains(KEY_KEYWORD)) {        
+            event = parseKeyEvent(line);
+        } else if (line.contains(ORIENTATION_KEYWORD)) {
+            event = parseOrientationEvent(line);
+        }
+
+        return event;
+    }
+
+    //[01-27 10:20:24.463]
+    private TimeInfo parseTime(String timeLog) {
+        TimeInfo  time = new TimeInfo();
+        if ((timeLog != null) && (!timeLog.equals(""))) {
+            timeLog = timeLog.replaceAll("(\\[|\\])", "");
+            String str[] = timeLog.split("(-| |:|\\.)");
+            int num[] = new int [str.length];
+            for (int i = 0; i < str.length ; i++) {
+                str[i] = str[i].trim();
+                num[i] = Integer.valueOf(str[i]);
+            }            
+            time.set(num[5], num[4], num[3], num[2], num[1], num[0]);
+	}
+        return time;
+    }
+
+    //[01-26 14:12:35.274][IE][Touch][0|down|695|2488]
+    private Event parseTouchEvent(String logLine) {
+        int x, y, action = 0;
+        TimeInfo time;
+
+        String infoStr[] = logLine.split("\\[IE\\]\\[Touch\\]\\[");
+        time = parseTime(infoStr[0]);
+
+        String infoStr2[] = infoStr[1].split("(\\[|\\||\\])");
+
+        for (int i = 0; i < infoStr2.length ; i++) {
+                infoStr2[i] = infoStr2[i].trim();
+        }
+        x = Integer.valueOf(infoStr2[2]);
+        y = Integer.valueOf(infoStr2[3]);
+        
+        if (infoStr2[1].equals("down"))  {
+            action = EventTouch.ACTION_DOWN;
+        } else if (infoStr2[1].equals("up"))  {
+            action = EventTouch.ACTION_UP;
+        }        
+
+        Event event = new EventTouch(x, y, action, time);
+        
+        return event;
+    }
+
+    //[01-26 14:12:35.274][IE][Key][3|down]
+    private Event parseKeyEvent(String logLine) {
+        int keyCode, keyAction = 0;
+        TimeInfo time;
+
+        String infoStr[] = logLine.split("\\[IE\\]\\[Key\\]\\[");
+        time = parseTime(infoStr[0]);
+
+        String infoStr2[] = infoStr[1].split("(\\[|\\||\\])");
+
+        for (int i = 0; i < infoStr2.length ; i++) {
+                infoStr2[i] = infoStr2[i].trim();
+        }
+
+        keyCode = Integer.valueOf(infoStr2[0]);
+
+        if (infoStr2[1].equals("down"))  {
+            keyAction = EventKey.ACTION_DOWN;
+        } else if (infoStr2[1].equals("up"))  {
+            keyAction = EventKey.ACTION_UP;
+        }        
+
+        Event event  = new EventKey(keyCode, keyAction, 0, time);
+        
+        return event;
+    }
+
+    //[01-26 14:12:35.274][IE][Orientation][Land]
+    private Event parseOrientationEvent(String logLine) {
+        int action = 0;
+        TimeInfo time;
+
+        String infoStr[] = logLine.split("\\[IE\\]\\[Orientation\\]\\[");
+        time = parseTime(infoStr[0]);
+
+        String infoStr2[] = infoStr[1].split("\\]");
+        infoStr2[0] = infoStr2[0].trim();
+
+        if (infoStr2[0].equals("Land"))  {
+            action = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        } else if (infoStr2[1].equals("Port"))  {
+            action = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        }
+
+        Event event  = new EventOrientation(action, time);
+        return event;
     }
 }
