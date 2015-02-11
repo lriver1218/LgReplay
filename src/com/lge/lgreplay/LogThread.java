@@ -25,13 +25,6 @@ public class LogThread extends Thread {
         mHandler = handler;
     }
 
-    public void setStop() {
-        mIsStop = true;
-        if (mProcess != null) {
-            mProcess.destroy();
-        }
-    }
-
     @Override
     public void run() {
         BufferedReader reader = null;
@@ -67,6 +60,13 @@ public class LogThread extends Thread {
             Message message = mHandler.obtainMessage(ReplayService.MESSAGE_NOW_ACTIVITY);
             message.obj = new ComponentName(results[0], results[1]);
             mHandler.sendMessage(message);
+        }
+    }
+
+    public void setStop() {
+        mIsStop = true;
+        if (mProcess != null) {
+            mProcess.destroy();
         }
     }
 }

@@ -4,11 +4,13 @@ package com.lge.lgreplay.view;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.lge.lgreplay.R;
@@ -16,18 +18,18 @@ import com.lge.lgreplay.ReplayService;
 
 public class ReplayPanelView extends LinearLayout {
     private static final int REPLAY_PANEL_HIDE_DELAY = 2000;
+
     private Context mContext;
     private Handler mHandler;
     private boolean mIsReplaying = false;
 
     private ImageButton mReplayButton;
-    private ImageButton mReplayBallButton;
-    private LinearLayout mReplayButtonLayout;
+    private ImageView mReplayBall;
 
     private Handler mPanelHideHandler = new Handler() {
         public void handleMessage(Message message) {
             if (mIsReplaying) {
-                hideReplayPanel();
+                hideReplayButton();
                 showReplayBall();
             }
         }
@@ -54,12 +56,12 @@ public class ReplayPanelView extends LinearLayout {
             }
         });
 
-        mReplayBallButton = (ImageButton) findViewById(R.id.replay_ball);
-        mReplayBallButton.setOnTouchListener(new View.OnTouchListener() {
+        mReplayBall = (ImageView) findViewById(R.id.replay_ball);
+        mReplayBall.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 hideReplayBall();
-                showReplayPanel();
+                showReplayButton();
 
                 mPanelHideHandler.sendEmptyMessageDelayed(0, REPLAY_PANEL_HIDE_DELAY);
                 return false;
@@ -85,7 +87,7 @@ public class ReplayPanelView extends LinearLayout {
         mIsReplaying = true;
         mReplayButton.setImageResource(R.drawable.stop_replay_button);
 
-        hideReplayPanel();
+        hideReplayButton();
         showReplayBall();
     }
 
@@ -96,22 +98,22 @@ public class ReplayPanelView extends LinearLayout {
         mReplayButton.setImageResource(R.drawable.start_replay_button);
 
         hideReplayBall();
-        showReplayPanel();
+        showReplayButton();
     }
 
-    private void showReplayPanel() {
+    private void showReplayButton() {
         mReplayButton.setVisibility(View.VISIBLE);
     }
 
-    private void hideReplayPanel() {
+    private void hideReplayButton() {
         mReplayButton.setVisibility(View.GONE);
     }
 
     private void showReplayBall() {
-        mReplayBallButton.setVisibility(View.VISIBLE);
+        mReplayBall.setVisibility(View.VISIBLE);
     }
 
     private void hideReplayBall() {
-        mReplayBallButton.setVisibility(View.GONE);
+        mReplayBall.setVisibility(View.GONE);
     }
 }

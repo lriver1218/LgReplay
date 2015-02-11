@@ -112,7 +112,7 @@ public class ReplayThread extends Thread {
     @Override
     public void run() {
         Log.d("XXX", "run");
-
+        
         /*
         <3>[   85.668952 / 01-01 10:56:18.949][3] [Touch] 1 finger pressed: <0> x[ 848] y[1450] z[ 58]
         <3>[   85.668982 / 01-01 10:56:18.949][3] [Touch] 2 finger pressed: <1> x[ 996] y[2454] z[ 34]
