@@ -4,11 +4,16 @@ import com.lge.lgreplay.R;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +25,7 @@ public class TouchView extends FrameLayout {
 	int mTouchDiameter;
 	WindowManager.LayoutParams params;
 	private WindowManager mWindowManager;
+	int mPointerLocation = 0;
 
 	public TouchView(Context context) {
 		super(context);
@@ -30,13 +36,22 @@ public class TouchView extends FrameLayout {
 
         mTouchSpot.setImageResource(R.drawable.ic_touch_spot);
         initViews();
+        
+        try {
+        	mPointerLocation = Settings.System.getInt(context.getContentResolver(), Settings.System.POINTER_LOCATION);
+			if (mPointerLocation==0) {
+				Settings.System.putInt(context.getContentResolver(), Settings.System.POINTER_LOCATION, 1);
+			}
+		} catch (SettingNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void initViews() {
         params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PRIORITY_PHONE, // WindowManager.LayoutParams.TYPE_PRIORITY_PHONE,
+                WindowManager.LayoutParams.TYPE_NAVIGATION_BAR_PANEL, // WindowManager.LayoutParams.TYPE_PRIORITY_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
@@ -71,17 +86,39 @@ public class TouchView extends FrameLayout {
 	
 	public void setKeyVisibility(boolean vis) {
 		if (vis) {
-			mKeyName.setAlpha(255);
+			mKeyName.setVisibility(View.VISIBLE);
 		} else {
-			mKeyName.setAlpha(0);
+			mKeyName.setVisibility(View.INVISIBLE);
 		}
 	}
 
 	public void setTouchSpotVisibility(boolean vis) {
 		if (vis) {
-			mTouchSpot.setAlpha(255);
+			mTouchSpot.setVisibility(View.VISIBLE);
 		} else {
-			mTouchSpot.setAlpha(0);
+			AlphaAnimation anim = new AlphaAnimation(1, 0);
+			anim.setDuration(500);
+			anim.setAnimationListener(new Animation.AnimationListener() {
+				
+				@Override
+				public void onAnimationStart(Animation arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void onAnimationRepeat(Animation arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void onAnimationEnd(Animation arg0) {
+					mTouchSpot.setVisibility(View.INVISIBLE);
+				}
+			});
+			mTouchSpot.setAnimation(anim);
+			mTouchSpot.startAnimation(anim);
 		}
 	}
 	

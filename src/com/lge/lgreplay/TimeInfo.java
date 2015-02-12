@@ -9,14 +9,20 @@ public class TimeInfo extends Time {
 		super();
 	}
 	
+	public TimeInfo(int millis, int second, int minute, int hour, int monthDay, int month) {
+		super();
+		super.set(second, minute, hour, monthDay, month, 2015);
+		this.millis = millis;
+	}
+	
 	public void set(int millis, int second, int minute, int hour, int monthDay, int month) {
 		super.set(second, minute, hour, monthDay, month, 2015);
 		this.millis = millis;
 	}
 	
-	public long toMillis(boolean ignoreDst) {
-        long res = super.toMillis(ignoreDst);
-        res =+ (long) millis;
+	public long toMillis() {
+        long res = super.toMillis(true);
+        res += (long) millis;
         return res;
     }
 }
