@@ -43,7 +43,7 @@ public class TouchView extends FrameLayout {
 				Settings.System.putInt(context.getContentResolver(), Settings.System.POINTER_LOCATION, 1);
 			}
 		} catch (SettingNotFoundException e) {
-			e.printStackTrace();
+			Settings.System.putInt(context.getContentResolver(), Settings.System.POINTER_LOCATION, 1);
 		}
 	}
 	

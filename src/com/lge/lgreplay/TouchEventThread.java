@@ -80,6 +80,7 @@ public class TouchEventThread extends Thread {
 				//sendMessage(ReplayService.MESSAGE_ACTION_SET_TOUCH_SPOT, (int)next.getX(), (int)next.getY());
 				sendMessage(ReplayService.MESSAGE_ACTION_TOUCH_UI_HIDE);
 				sendPointerEvent(MotionEvent.ACTION_UP, next.getX(), next.getY());
+				
 				mMoveEventStop = false;
 			}
 			try {

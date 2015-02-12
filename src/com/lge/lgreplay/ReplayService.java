@@ -77,8 +77,8 @@ public class ReplayService extends Service {
             } else if (message.what == MESSAGE_NOW_ACTIVITY) {
                 setCurrentActivity((ComponentName) message.obj);
             } else if (message.what == MESSAGE_ACTION_TOUCH_START) {
-            	mTouchEventThread.interrupt();
             	mTouchEventThread.startTouchEvent(message.arg1);
+            	mTouchEventThread.interrupt();
             } else if (message.what == MESSAGE_ACTION_TOUCH_STOP) {
             	mTouchEventThread.stopTouchEvent();
             } else if (message.what == MESSAGE_ACTION_TOUCH_UI_SHOW) {
