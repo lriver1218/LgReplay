@@ -80,7 +80,7 @@ public class ReplayService extends Service {
             	mTouchEventThread.startTouchEvent(message.arg1);
             	mTouchEventThread.interrupt();
             } else if (message.what == MESSAGE_ACTION_TOUCH_STOP) {
-            	mTouchEventThread.stopTouchEvent();
+            	//mTouchEventThread.stopTouchEvent();
             } else if (message.what == MESSAGE_ACTION_TOUCH_UI_SHOW) {
             	mTouchView.setTouchSpotVisibility(true);
             } else if (message.what == MESSAGE_ACTION_TOUCH_UI_HIDE) {

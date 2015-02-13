@@ -4,6 +4,7 @@ package com.lge.lgreplay;
 import java.util.LinkedList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.input.InputManager;
 import android.os.Handler;
 import android.os.Message;
@@ -59,9 +60,7 @@ public class ReplayThread extends Thread {
 	            		replayKey((EventKey) event);
 	            		break;
 	            	case Event.TYPE_ACTIVITY:
-	            		if (!checkActivity((EventActivity) event)) {
-	                        showActivityIsDifferent();
-	                    }
+	            		replayActivity((EventActivity) event);
 	            		break;
 	            	case Event.TYPE_ORIENTATION:
 	            		replayOrientation((EventOrientation) event);
@@ -90,12 +89,14 @@ public class ReplayThread extends Thread {
 
     private void replayTouch(EventTouch touchEvent, int index) {
         if ((index < mEvents.size()-1) && touchEvent.getAction()==MotionEvent.ACTION_DOWN) {
-        	Message message = mHandler.obtainMessage();
-        	message.what = ReplayService.MESSAGE_ACTION_TOUCH_START;
-        	message.arg1 = index;
-        	sendMessage(message);
+        	if (!ignoreTouchEvent(index)) {
+	        	Message message = mHandler.obtainMessage();
+	        	message.what = ReplayService.MESSAGE_ACTION_TOUCH_START;
+	        	message.arg1 = index;
+	        	sendMessage(message);
+        	}
         } else if (touchEvent.getAction()==MotionEvent.ACTION_UP) {
-        	sendMessage(ReplayService.MESSAGE_ACTION_TOUCH_STOP);
+        	//sendMessage(ReplayService.MESSAGE_ACTION_TOUCH_STOP);
         }
     }
      
@@ -109,6 +110,13 @@ public class ReplayThread extends Thread {
                 InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
     }
     
+    private void replayActivity(EventActivity activityEvent) {
+    	Intent intent = activityEvent.getIntent();
+    	if (intent != null) {
+    		mContext.startActivity(intent);
+    	}
+    }
+    
     private void replayOrientation(EventOrientation orientationEvent) {
     	Message message = mHandler.obtainMessage();
         message.what = ReplayService.MESSAGE_ACTION_SET_ORIENTATION;
@@ -116,9 +124,23 @@ public class ReplayThread extends Thread {
         sendMessage(message);
     }
 
-    private boolean checkActivity(EventActivity event) {
-        // TODO
-        return true;
+    private boolean ignoreTouchEvent(int index) {
+    	if (index < mEvents.size()-2) {
+	    	Event event_0 = mEvents.get(index);
+	    	Event event_1 = mEvents.get(index+1);
+	    	Event event_2 = mEvents.get(index+2);
+	    	
+	    	if (event_1.getType()==Event.TYPE_TOUCH &&
+	    			event_2.getType()==Event.TYPE_ACTIVITY) {
+	    		long sleepTimeToUp = getSleepTime(event_0, event_1);
+	    		long sleepTimeToActivity = getSleepTime(event_1, event_2);
+	    		if (sleepTimeToUp<500 && sleepTimeToActivity<100) {
+	    			return true;
+	    		}
+	    	}
+    	}
+        
+        return false;
     }
     
     private long getSleepTime(Event current, Event next) {

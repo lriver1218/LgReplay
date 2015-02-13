@@ -24,10 +24,7 @@ public class TouchEventThread extends Thread {
 	
 	boolean mIsStop = false;
 	
-	float[] mMoveX;
-    float[] mMoveY;
-    int mMovePointer = 0;
-	boolean mMoveEventStop = false;
+	boolean mTouchEventStop = false;
 	
 	EventTouch current;
 	EventTouch next;
@@ -51,11 +48,10 @@ public class TouchEventThread extends Thread {
 	public void startTouchEvent(int index) {
 		current = (EventTouch) mEvents.get(index);
 		next = (EventTouch) mEvents.get(index+1);
-		
-		Log.v("XXX", "current x = " + current.getX() + " / y = " + current.getY());
-		Log.v("XXX", "next x = " + next.getX() + " / y = " + next.getY());
 
-    	mMoveEventStop = true;
+		if (next.getAction()==MotionEvent.ACTION_UP) {
+			mTouchEventStop = true;
+		}
     }
 	
 	public void stopTouchEvent() {
@@ -66,10 +62,18 @@ public class TouchEventThread extends Thread {
 	@Override
 	public void run() {
 		while(!mIsStop) {
-			if (mMoveEventStop) {
+			if (mTouchEventStop) {
 				long sleepTime = next.getTime().toMillis()-current.getTime().toMillis();
 				int cycle = (int)sleepTime/20;
-				float gradient = Math.abs(current.getY()-next.getY()) / Math.abs(current.getX()-next.getX());
+				float parent = Math.abs(current.getX()-next.getX());
+				float child = Math.abs(current.getY()-next.getY());
+				float gradient = 0;
+				if (parent != 0 || child != 0) {
+					gradient = child / parent;
+				}
+				
+				Log.v("LGReplay", "Touch X=["+current.getX()+"->"+next.getX()+"], Y=["+current.getY()+"->"+next.getY()+
+						"], Time=" + sleepTime + ", Cycle=" + cycle + ", Gradient=" + gradient);
 				
 				sendMessage(ReplayService.MESSAGE_ACTION_SET_TOUCH_SPOT, (int)current.getX(), (int)current.getY());
 				sendMessage(ReplayService.MESSAGE_ACTION_TOUCH_UI_SHOW);
@@ -81,18 +85,18 @@ public class TouchEventThread extends Thread {
 				sendMessage(ReplayService.MESSAGE_ACTION_TOUCH_UI_HIDE);
 				sendPointerEvent(MotionEvent.ACTION_UP, next.getX(), next.getY());
 				
-				mMoveEventStop = false;
+				mTouchEventStop = false;
 			}
 			try {
 				sleep(Long.MAX_VALUE);
 			} catch (InterruptedException e) {
-				Log.v("XXX", "interrupted");
+				Log.v("LGReplay", "Touch Interrupted");
 			}
 		}
 	}
 	
 	private void sendMoveEvent(int cycle, float gradient, int index) {
-		if (mMoveEventStop) {
+		if (mTouchEventStop) {
 			float distance = Math.abs(next.getX()-current.getX()) / cycle;
 			float x = 0;
 			float y = 0;
