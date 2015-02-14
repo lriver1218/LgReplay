@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class InputEvent extends Event{    
 
     public InputEvent() {
-        eventType = "IE";
+        eventType = Event.INPUT_EVENT_TYPE;
     }
 
     public InputEvent(String logFormattedTime) {

@@ -1,10 +1,6 @@
 package com.lge.lgreplaymaker.event.inputevent;
 
 import com.lge.lgreplaymaker.event.*;
-import java.lang.System;
-import java.lang.String;
-import java.util.*;
-import java.time.LocalDateTime;
 
 public class KeyInfo extends Info {
 
@@ -12,11 +8,11 @@ public class KeyInfo extends Info {
     String keyAction = "";
 
     public KeyInfo() {
-        infoType = "Key";        
+        infoType = Info.KEY_TYPE;        
     }
 
     public KeyInfo(String keyCode, String keyAction) {
-        infoType = "Key";
+        infoType = Info.KEY_TYPE;
         this.keyCode = keyCode;
         this.keyAction = keyAction;        
     }

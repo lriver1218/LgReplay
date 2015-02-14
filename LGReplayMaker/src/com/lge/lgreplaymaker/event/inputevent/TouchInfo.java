@@ -1,10 +1,6 @@
 package com.lge.lgreplaymaker.event.inputevent;
 
 import com.lge.lgreplaymaker.event.*;
-import java.lang.System;
-import java.lang.String;
-import java.util.*;
-import java.time.LocalDateTime;
 
 enum Action {down, up}
 
@@ -16,11 +12,11 @@ public class TouchInfo extends Info {
     String y = "0";
 
     public TouchInfo() {
-        super.infoType = "Touch";
+        super.infoType = Info.TOUCH_TYPE;
     }
 
     public TouchInfo(String id, String action, String x, String y) {
-        infoType = "Touch";
+        infoType = Info.TOUCH_TYPE;
         this.id = id;
         this.action = action;
         this.x = x;

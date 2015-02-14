@@ -1,10 +1,6 @@
 package com.lge.lgreplaymaker.event.inputevent; 
 
 import com.lge.lgreplaymaker.event.*;
-import java.lang.System;
-import java.lang.String;
-import java.util.*;
-import java.time.LocalDateTime;
 
 public class OrientationInfo extends Info {
 
@@ -14,11 +10,11 @@ public class OrientationInfo extends Info {
     public String action = "";    
 
     public OrientationInfo() {
-        infoType = "Orientation";
+        infoType = Info.ORIENTATION_TYPE;
     }
 
     public OrientationInfo(String action) {
-        infoType = "Orientation";
+        infoType = Info.ORIENTATION_TYPE;
         this.action = action;
     }
 

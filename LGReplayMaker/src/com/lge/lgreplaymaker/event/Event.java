@@ -6,6 +6,7 @@ import java.util.*;
 import java.time.LocalDateTime;
 
 public class Event {
+    public static final String INPUT_EVENT_TYPE = "IE"; 
 
     public LocalDateTime time = null; 
     public String logFormattedTime = "";
