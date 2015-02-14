@@ -9,17 +9,18 @@ import com.lge.lgreplay.event.EventKey;
 import com.lge.lgreplay.event.EventOrientation;
 import com.lge.lgreplay.event.EventSleep;
 import com.lge.lgreplay.event.EventTouch;
+import com.lge.lgreplay.event.EventActivity;
 
 import java.io.*;
 import java.util.*;
-import java.io.File;
-import java.util.LinkedList;
+import android.os.AsyncTask;
 
 public class RepParser {
 
     static final String TOUCH_KEYWORD = "[IE][Touch]";
     static final String KEY_KEYWORD = "[IE][Key]";
     static final String ORIENTATION_KEYWORD = "[IE][Orientation]";
+    static final String ACTIVITY_KEYWORD = "[IE][Activity]";
 
     public LinkedList<Event> parseFileToList(File file) {
         LinkedList<Event> list = new LinkedList<Event>();
@@ -80,6 +81,8 @@ public class RepParser {
             event = parseKeyEvent(line);
         } else if (line.contains(ORIENTATION_KEYWORD)) {
             event = parseOrientationEvent(line);
+        } else if (line.contains(ACTIVITY_KEYWORD)) {
+            event = parseActivityEvent(line);
         }
 
         return event;
@@ -173,6 +176,27 @@ public class RepParser {
         }
 
         Event event  = new EventOrientation(action, time);
+        return event;
+    }
+
+    //[02-14 17:09:01.954][IE][Activity][android.intent.action.MAIN|android.intent.category.LAUNCHER|0x10200000|com.android.contacts/.activities.DialtactsActivity]
+    private Event parseActivityEvent(String logLine) {        
+        TimeInfo time;
+
+        String infoStr[] = logLine.split("\\[IE\\]\\[Activity\\]\\[");
+        time = parseTime(infoStr[0]);
+
+        String infoStr2[] = infoStr[1].split("(\\[|\\||\\])");
+
+        for (int i = 0; i < infoStr2.length ; i++) {
+                infoStr2[i] = infoStr2[i].trim();
+                if (infoStr2[i].equals("null")) {
+                    infoStr2[i] = "";
+                }
+        }           
+
+        Event event  = new EventActivity(infoStr2[0], infoStr2[1], infoStr2[2], infoStr2[3], time);
+        
         return event;
     }
 }
