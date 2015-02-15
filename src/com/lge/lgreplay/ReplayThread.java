@@ -137,7 +137,8 @@ public class ReplayThread extends Thread {
 	    			event_2.getType()==Event.TYPE_ACTIVITY) {
 	    		long sleepTimeToUp = getSleepTime(event_0, event_1);
 	    		long sleepTimeToActivity = getSleepTime(event_1, event_2);
-	    		if (sleepTimeToUp<500 && sleepTimeToActivity<100) {
+	    		// Touch down->up 시간이 500ms 미만, Touch up->Start u0 시간이 200ms 미만일 경우 터치 무시
+	    		if (sleepTimeToUp<500 && sleepTimeToActivity<200) {
 	    			return true;
 	    		}
 	    	}
