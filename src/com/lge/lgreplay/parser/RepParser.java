@@ -15,7 +15,11 @@ import java.io.*;
 import java.util.*;
 import android.os.AsyncTask;
 
+import android.util.Log;
+
 public class RepParser {
+    static final String TAG = "RepParser";
+    static final boolean debug = false;
 
     static final String TOUCH_KEYWORD = "[IE][Touch]";
     static final String KEY_KEYWORD = "[IE][Key]";
@@ -101,6 +105,7 @@ public class RepParser {
             }            
             time.set(num[5], num[4], num[3], num[2], num[1], num[0]);
 	}
+
         return time;
     }
 
@@ -126,8 +131,12 @@ public class RepParser {
             action = EventTouch.ACTION_UP;
         }        
 
+        if (debug) {
+            Log.d(TAG, "TouchEvent time:" + time +" x:" + x + " y:" + y + " action:" + action);
+        }
+
         Event event = new EventTouch(x, y, action, time);
-        
+
         return event;
     }
 
@@ -153,6 +162,10 @@ public class RepParser {
             keyAction = EventKey.ACTION_UP;
         }        
 
+        if (debug) {
+            Log.d(TAG, "KeyEvent time:" + time +" keyCode:" + keyCode + " keyAction:" + keyAction);
+        }
+
         Event event  = new EventKey(keyCode, keyAction, 0, time);
         
         return event;
@@ -175,6 +188,10 @@ public class RepParser {
             action = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         }
 
+        if (debug) {
+            Log.d(TAG, "OrientationEvent action:" + action);
+        }
+
         Event event  = new EventOrientation(action, time);
         return event;
     }
@@ -193,7 +210,11 @@ public class RepParser {
                 if (infoStr2[i].equals("null")) {
                     infoStr2[i] = "";
                 }
-        }           
+        }
+
+        if (debug) {
+            Log.d(TAG, "ActivityEvent time:" + time +" act:" + infoStr2[0] + " dat:" + infoStr2[1] + " cat:" + infoStr2[2] + " flg:" + infoStr2[3] + " cmp:" + infoStr2[4]);
+        }
 
         Event event  = new EventActivity(infoStr2[0], infoStr2[1], infoStr2[2], infoStr2[3], infoStr2[4], time);
         
