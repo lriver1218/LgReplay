@@ -13,8 +13,8 @@ import com.lge.lgreplay.event.EventActivity;
 
 import java.io.*;
 import java.util.*;
-import android.os.AsyncTask;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 public class RepParser {
@@ -29,6 +29,12 @@ public class RepParser {
     public LinkedList<Event> parseFileToList(File file) {
         LinkedList<Event> list = new LinkedList<Event>();
 
+        /*Log.d(TAG, "called parseFileToList");
+        ParsingTask parsingTask = new ParsingTask();
+        File [] files = new File[1];
+        files[0] = file;
+        parsingTask.execute(files);
+        */
         FileReader in = null; 
 
         try {
@@ -44,7 +50,7 @@ public class RepParser {
             }
             in.close();
         } catch( IOException e){}
-
+        
         // TODO for test
         /*TimeInfo time = new TimeInfo();
         time.set(274, 35, 12, 14, 26, 1);
@@ -219,5 +225,41 @@ public class RepParser {
         Event event  = new EventActivity(infoStr2[0], infoStr2[1], infoStr2[2], infoStr2[3], infoStr2[4], time);
         
         return event;
+    }
+
+    class ParsingTask extends AsyncTask<File , Long, LinkedList<Event>> {
+        @Override
+        protected LinkedList<Event> doInBackground(File... file) {
+            LinkedList<Event> list= new LinkedList<Event>();
+            FileReader in = null;            
+
+                try {
+                    BufferedReader br =  new BufferedReader(in = new FileReader(file[0]));
+                    String line;
+
+                    while ((line = br.readLine()) != null) {
+                        Event event = null;
+                        event = parse(line);
+                        if (event != null) {
+                            list.add(event);
+                        }
+                    }
+                    in.close();
+                } catch( IOException e){}
+            return list;
+        }
+
+        @Override
+        protected void	onProgressUpdate(Long... values) {
+            //To-Do
+            //update progress bar
+        }
+
+        @Override
+        protected void onPostExecute(LinkedList<Event> eventList) {
+            //To-Do
+            //Show toast and call callback function
+            Log.d(TAG, "onPostExecute");
+        }
     }
 }
