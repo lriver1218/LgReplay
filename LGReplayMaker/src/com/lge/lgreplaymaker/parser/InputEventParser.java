@@ -226,11 +226,9 @@ log:             01-27 23:55:45.360  1161  1463 I InputReader: Device reconfigur
     }
 
     private Event parseActivityEvent(String logLine) {
-        Event event = new InputEvent();
-        String act = "";        String cat = "";        String flg = "";        String cmp = "";
-        final String ACT = "act=";   final String CAT = "cat=";   final String FLG = "flg=";   final String CMP = "cmp=";
-        String [] infoKeyword = {"act=", "cat=", "flg=", "cmp="};
-        String [] infoStrs = new String[4];        
+        Event event = new InputEvent();        
+        String [] infoKeyword = {"act=", "dat=", "cat=", "flg=", "cmp="};
+        String [] infoStrs = new String[5];        
 
         if (logLine.contains(ACTIVITY_KEYWORD)) {
             String time = logLine.substring(0, 18);
@@ -247,7 +245,7 @@ log:             01-27 23:55:45.360  1161  1463 I InputReader: Device reconfigur
                 }                
             }            
 
-            Info info =  new ActivityInfo(infoStrs[0], infoStrs[1], infoStrs[2], infoStrs[3]);
+            Info info =  new ActivityInfo(infoStrs[0], infoStrs[1], infoStrs[2], infoStrs[3], infoStrs[4]);
             event.logFormattedTime = time.trim();
             event.info = info;
         } 
