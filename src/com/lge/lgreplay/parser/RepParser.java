@@ -171,7 +171,7 @@ public class RepParser {
 
         if (infoStr2[0].equals("Land"))  {
             action = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-        } else if (infoStr2[1].equals("Port"))  {
+        } else if (infoStr2[0].equals("Port"))  {
             action = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         }
 
@@ -195,7 +195,7 @@ public class RepParser {
                 }
         }           
 
-        Event event  = new EventActivity(infoStr2[0], infoStr2[1], infoStr2[2], infoStr2[3], time);
+        Event event  = new EventActivity(infoStr2[0], infoStr2[1], infoStr2[2], infoStr2[3], infoStr2[4], time);
         
         return event;
     }
