@@ -106,12 +106,14 @@ public class ReplayThread extends Thread {
                 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
                 KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY | KeyEvent.FLAG_FALLBACK,
                 InputDevice.SOURCE_KEYBOARD);
+        Log.v("LGReplay", "Key event=" + event);
         InputManager.getInstance().injectInputEvent(event,
                 InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
     }
     
     private void replayActivity(EventActivity activityEvent) {
     	Intent intent = activityEvent.getIntent();
+    	Log.v("LGReplay", "Activity intent=" + intent);
     	if (intent != null) {
     		mContext.startActivity(intent);
     	}
@@ -121,6 +123,7 @@ public class ReplayThread extends Thread {
     	Message message = mHandler.obtainMessage();
         message.what = ReplayService.MESSAGE_ACTION_SET_ORIENTATION;
         message.arg1 = orientationEvent.getOrientation();
+        Log.v("LGReplay", "Orientation event=" + orientationEvent.getOrientation());
         sendMessage(message);
     }
 
