@@ -36,13 +36,8 @@ public class RepParser {
         File [] files = new File[1];
         files[0] = file;
         parsingTask.execute(files);
-        */
-        ProgressDialog dialog = new ProgressDialog(context);
-        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setTitle("parsing replay file");
-        dialog.setMessage("parsing...");
-        dialog.show();
-        
+        */        
+
         FileReader in = null; 
 
         try {
@@ -226,7 +221,7 @@ public class RepParser {
                 }
         }
 
-        if (true) {
+        if (debug) {
             Log.d(TAG, "ActivityEvent time:" + time +" act:" + infoStr2[0] + " dat:" + infoStr2[1] + " cat:" + infoStr2[2] 
             		+ " flg:" + infoStr2[3] + " cmp:" + infoStr2[4] + " extra:" + infoStr2[5]);
         }
