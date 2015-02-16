@@ -28,7 +28,7 @@ public class RepParser {
     static final String ORIENTATION_KEYWORD = "[IE][Orientation]";
     static final String ACTIVITY_KEYWORD = "[IE][Activity]";
 
-    public LinkedList<Event> parseFileToList(Context context, File file) {
+    public LinkedList<Event> parseFileToList(File file) {
         LinkedList<Event> list = new LinkedList<Event>();
 
         /*Log.d(TAG, "called parseFileToList");
