@@ -36,6 +36,7 @@ public class InputEventParser implements EventParser
             eventTreeMap = new TreeMap <LocalDateTime, Event> ();
 
             parse("02-14 17:05:19.840  1057  1057 I ActivityManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.HOME] flg=0x10000000 cmp=com.lge.launcher2/.Launcher} from uid 0 on display 0");
+            parse("02-12 10:42:14.555   942  1718 I ActivityManager: START u0 {act=android.intent.action.PICK dat= typ=vnd.android.cursor.dir/track cmp=com.lge.music/.TrackBrowserActivity (has extras)} from uid 10027 on display 0");
             /*
             parse("<6>[ 1303.556382 / 01-27 10:20:24.463] [Touch] 1 finger pressed : <0> x[ 670] y[2493] z[ 50]");
             parse("<6>[ 1303.600001 / 01-29 10:21:14.503] [Touch] touch_release[ ] : <3> x[ 672] y[2495]");
@@ -58,6 +59,10 @@ public class InputEventParser implements EventParser
     private void addSkipKeyCode () {
         skipKeyMap.put(String.valueOf(KeyCode.KEYCODE_HOME), KeyCode.KEYCODE_HOME);
         skipKeyMap.put(String.valueOf(KeyCode.KEYCODE_BACK), KeyCode.KEYCODE_BACK);
+        skipKeyMap.put(String.valueOf(KeyCode.KEYCODE_NOTIFICATION), KeyCode.KEYCODE_NOTIFICATION);
+        skipKeyMap.put(String.valueOf(KeyCode.KEYCODE_CHANNEL_DOWN), KeyCode.KEYCODE_CHANNEL_DOWN);
+        skipKeyMap.put(String.valueOf(KeyCode.KEYCODE_WINDOW), KeyCode.KEYCODE_WINDOW);
+        skipKeyMap.put(String.valueOf(KeyCode.KEYCODE_GUIDE), KeyCode.KEYCODE_GUIDE);
         skipKeyMap.put(String.valueOf(KeyCode.KEYCODE_APP_SWITCH), KeyCode.KEYCODE_APP_SWITCH);
     }
 
@@ -227,11 +232,17 @@ log:             01-27 23:55:45.360  1161  1463 I InputReader: Device reconfigur
 
     private Event parseActivityEvent(String logLine) {
         Event event = new InputEvent();        
-        String [] infoKeyword = {"act=", "dat=", "cat=", "flg=", "cmp="};
-        String [] infoStrs = new String[5];        
+        final String [] infoKeyword = {"act=", "dat=", "cat=", "flg=", "cmp="};
+        final String extraKeyword = "has extras";
+        String [] infoStrs = new String[5];
+        String extra = "null"; 
 
         if (logLine.contains(ACTIVITY_KEYWORD)) {
             String time = logLine.substring(0, 18);
+
+            if (logLine.contains(extraKeyword)) {
+                extra = extraKeyword;
+            }
 
             for (int i = 0 ; i < infoKeyword.length ; i++) {
                 if (logLine.contains(infoKeyword[i])) {
@@ -243,9 +254,9 @@ log:             01-27 23:55:45.360  1161  1463 I InputReader: Device reconfigur
                     infoStrs[i] = infoStr2[1];
                     //System.out.println(infoKeyword[i] + " <" + infoStr2[1] + ">");
                 }                
-            }            
+            }
 
-            Info info =  new ActivityInfo(infoStrs[0], infoStrs[1], infoStrs[2], infoStrs[3], infoStrs[4]);
+            Info info =  new ActivityInfo(infoStrs[0], infoStrs[1], infoStrs[2], infoStrs[3], infoStrs[4], extra);
             event.logFormattedTime = time.trim();
             event.info = info;
         } 
@@ -273,5 +284,9 @@ log:
 class KeyCode {
     public static final int KEYCODE_HOME            = 3;
     public static final int KEYCODE_BACK            = 4;
+    public static final int KEYCODE_NOTIFICATION    = 83;
+    public static final int KEYCODE_CHANNEL_DOWN    = 167;
+    public static final int KEYCODE_WINDOW          = 171;
+    public static final int KEYCODE_GUIDE           = 172;
     public static final int KEYCODE_APP_SWITCH      = 187;
 }
