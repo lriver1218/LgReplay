@@ -14,6 +14,7 @@ public class EventActivity extends Event {
 	String mCat;
 	String mFlg;
 	String mCmp;
+	String mExtra;
 
 	public EventActivity(Intent intent, TimeInfo time) {
 		setType(TYPE_ACTIVITY);
@@ -21,7 +22,7 @@ public class EventActivity extends Event {
 		setTime(time);
 	}
 
-    public EventActivity(String act, String dat, String cat, String flg, String cmp,TimeInfo time) {
+    public EventActivity(String act, String dat, String cat, String flg, String cmp, String extra, TimeInfo time) {
     	mIntent = new Intent();
  		setType(TYPE_ACTIVITY);
  		mAct = act;
@@ -29,6 +30,7 @@ public class EventActivity extends Event {
  		mCat = cat;
  		mFlg = flg;
  		mCmp = cmp;
+ 		mExtra = extra;
  		setTime(time);
  		
  		if (!mAct.isEmpty()) {
@@ -64,6 +66,13 @@ public class EventActivity extends Event {
     	String className = split[0]+split[1];
     	return new ComponentName(packageName, className);
     }
+
+    public boolean hasExtra() {
+		if (mExtra.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
 
 	public Intent getIntent() {
 		return mIntent;

@@ -15,6 +15,8 @@ import java.io.*;
 import java.util.*;
 
 import android.os.AsyncTask;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.util.Log;
 
 public class RepParser {
@@ -26,7 +28,7 @@ public class RepParser {
     static final String ORIENTATION_KEYWORD = "[IE][Orientation]";
     static final String ACTIVITY_KEYWORD = "[IE][Activity]";
 
-    public LinkedList<Event> parseFileToList(File file) {
+    public LinkedList<Event> parseFileToList(Context context, File file) {
         LinkedList<Event> list = new LinkedList<Event>();
 
         /*Log.d(TAG, "called parseFileToList");
@@ -35,6 +37,12 @@ public class RepParser {
         files[0] = file;
         parsingTask.execute(files);
         */
+        ProgressDialog dialog = new ProgressDialog(context);
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setTitle("parsing replay file");
+        dialog.setMessage("parsing...");
+        dialog.show();
+        
         FileReader in = null; 
 
         try {
@@ -218,11 +226,12 @@ public class RepParser {
                 }
         }
 
-        if (debug) {
-            Log.d(TAG, "ActivityEvent time:" + time +" act:" + infoStr2[0] + " dat:" + infoStr2[1] + " cat:" + infoStr2[2] + " flg:" + infoStr2[3] + " cmp:" + infoStr2[4]);
+        if (true) {
+            Log.d(TAG, "ActivityEvent time:" + time +" act:" + infoStr2[0] + " dat:" + infoStr2[1] + " cat:" + infoStr2[2] 
+            		+ " flg:" + infoStr2[3] + " cmp:" + infoStr2[4] + " extra:" + infoStr2[5]);
         }
 
-        Event event  = new EventActivity(infoStr2[0], infoStr2[1], infoStr2[2], infoStr2[3], infoStr2[4], time);
+        Event event  = new EventActivity(infoStr2[0], infoStr2[1], infoStr2[2], infoStr2[3], infoStr2[4], infoStr2[5], time);
         
         return event;
     }
