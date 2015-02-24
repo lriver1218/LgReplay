@@ -3,6 +3,7 @@ package com.lge.lgreplay;
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.zip.Inflater;
 
 import com.lge.lgreplay.event.Event;
 import com.lge.lgreplay.parser.RepParser;
@@ -10,21 +11,23 @@ import com.lge.lgreplay.parser.RepParser;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
-import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TimePicker;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import ar.com.daidalos.afiledialog.*;
 
 public class MainActivity extends Activity {
@@ -39,7 +42,7 @@ public class MainActivity extends Activity {
 
     private ReplayService mReplayService;
 
-    private LinkedList<Event> mReplayList;
+    private LinkedList<Event> mReplayList = new LinkedList<Event>();
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -137,8 +140,38 @@ public class MainActivity extends Activity {
 
     // rev 1 : dialog
     private void setStartingTime() {
-        TimePickerDialog dialog = new TimePickerDialog(this, listener, 15, 24, false);
-        dialog.show();
+    	if (mReplayList != null && mReplayList.isEmpty()) {
+    		Toast.makeText(this, "Please select the REP file first!!" , Toast.LENGTH_LONG).show();
+    		return;
+    	}
+    	TimeInfo startTime = mReplayList.getFirst().getTime();
+    	TimeInfo endTime = mReplayList.getLast().getTime();
+    	
+    	LayoutInflater inflater = (LayoutInflater)MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    	View layout = inflater.inflate(R.layout.settime_dialog, null);
+
+    	final TextView startText = (TextView)layout.findViewById(R.id.playtime_Start);
+    	final TextView endText = (TextView)layout.findViewById(R.id.playtime_End);
+    	startText.setText(dateFormat(startTime));
+    	endText.setText(dateFormat(endTime));
+    	    	
+    	AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Set Playing Time");
+		alert.setView(layout);
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				// Do something with value!
+			}
+		});
+		
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				// Canceled.
+			}
+		});
+
+		alert.show(); 
     }
 
     private void toggleReplayPanel() {
@@ -178,12 +211,9 @@ public class MainActivity extends Activity {
                     Toast.LENGTH_SHORT).show();
         }
     };
-
-    private OnTimeSetListener listener = new OnTimeSetListener() {
-        @Override
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            Toast.makeText(getApplicationContext(), hourOfDay + " hours , " + minute + " mins",
-                    Toast.LENGTH_SHORT).show();
-        }
-    };
+    
+    public String dateFormat(TimeInfo time){
+    	return String.format("[%02d-%02d %02d:%02d:%02d.%03d]",
+    			time.month, time.monthDay, time.hour, time.minute, time.second, time.millis);
+    }
 }
