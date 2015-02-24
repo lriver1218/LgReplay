@@ -154,6 +154,11 @@ public class MainActivity extends Activity {
     	final TextView endText = (TextView)layout.findViewById(R.id.playtime_End);
     	startText.setText(dateFormat(startTime));
     	endText.setText(dateFormat(endTime));
+    	
+    	final EditText editStart = (EditText)layout.findViewById(R.id.edit_Start);
+    	final EditText editEnd = (EditText)layout.findViewById(R.id.edit_End);
+    	editStart.setHint(dateFormat(startTime));
+    	editEnd.setHint(dateFormat(endTime));
     	    	
     	AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Set Playing Time");

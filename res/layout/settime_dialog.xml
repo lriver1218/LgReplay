@@ -48,5 +48,51 @@
         			android:textAppearance="?android:attr/textAppearanceMedium"
     	    />
 	</LinearLayout>
-    
+
+        <LinearLayout android:orientation="horizontal"
+        			android:layout_width="fill_parent"
+        			android:layout_height="fill_parent"
+        			android:layout_marginTop="5dip">
+    	<TextView android:layout_width="70dip"
+        			android:layout_height="wrap_content"
+        			android:layout_gravity="center_vertical"
+        			android:layout_marginLeft="10dip"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+	        		android:text="START" 
+    	    />
+    	 <EditText android:id="@+id/edit_Start"
+    	     		android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_weight="1"
+        			android:layout_marginLeft="10dip"
+        			android:layout_marginRight="10dip"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+        			android:inputType="numberDecimal"
+    	    />
+	</LinearLayout>
+
+    <LinearLayout android:orientation="horizontal"
+        			android:layout_width="fill_parent"
+        			android:layout_height="fill_parent">
+    	<TextView android:layout_width="70dip"
+        			android:layout_height="wrap_content"
+        			android:layout_gravity="center_vertical"
+        			android:layout_marginLeft="10dip"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+	        		android:text="END" 
+    	    />
+		<EditText android:id="@+id/edit_End"
+    	     		android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_weight="1"
+        			android:layout_marginLeft="10dip"
+        			android:layout_marginRight="10dip"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+        			android:inputType="numberDecimal"
+    	    />
+	</LinearLayout>	
 </LinearLayout>
