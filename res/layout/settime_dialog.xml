@@ -49,50 +49,91 @@
     	    />
 	</LinearLayout>
 
-        <LinearLayout android:orientation="horizontal"
+    <LinearLayout android:orientation="horizontal"
         			android:layout_width="fill_parent"
         			android:layout_height="fill_parent"
         			android:layout_marginTop="5dip">
-    	<TextView android:layout_width="70dip"
+    	 <TextView android:layout_width="75dip"
         			android:layout_height="wrap_content"
         			android:layout_gravity="center_vertical"
-        			android:layout_marginLeft="10dip"
+        			android:layout_marginLeft="5dip"
         			android:textColor="#FFFFFF"
         			android:textAppearance="?android:attr/textAppearanceMedium"
-	        		android:text="START" 
+	        		android:text="Set Time" 
     	    />
-    	 <EditText android:id="@+id/edit_Start"
+    	 <EditText android:id="@+id/edit_month"
     	     		android:layout_width="wrap_content"
         			android:layout_height="wrap_content"
         			android:layout_weight="1"
-        			android:layout_marginLeft="10dip"
-        			android:layout_marginRight="10dip"
         			android:textColor="#FFFFFF"
         			android:textAppearance="?android:attr/textAppearanceMedium"
         			android:inputType="numberDecimal"
     	    />
+    	 <TextView android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+	        		android:text="-" 
+    	    />    	 
+    	 <EditText android:id="@+id/edit_monthday"
+    	     		android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_weight="1"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+        			android:inputType="numberDecimal"
+    	    />
+   	    
+    	 <EditText android:id="@+id/edit_hour"
+    	     		android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_weight="1"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+        			android:inputType="numberDecimal"
+    	   />
+    	 <TextView android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+	        		android:text=":" 
+    	    />      	  
+     	 <EditText android:id="@+id/edit_min"
+    	     		android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_weight="1"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+        			android:inputType="numberDecimal"
+    	   />
+    	 <TextView android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+	        		android:text=":" 
+    	    />       	  
+     	 <EditText android:id="@+id/edit_sec"
+    	     		android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_weight="1"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+        			android:inputType="numberDecimal"
+    	   />
+     	 <TextView android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+	        		android:text="." 
+    	    />     	  
+     	 <EditText android:id="@+id/edit_mil"
+    	     		android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_weight="1"
+        			android:layout_marginRight="5dip"
+        			android:textColor="#FFFFFF"
+        			android:textAppearance="?android:attr/textAppearanceMedium"
+        			android:inputType="numberDecimal"
+    	   />
 	</LinearLayout>
-
-    <LinearLayout android:orientation="horizontal"
-        			android:layout_width="fill_parent"
-        			android:layout_height="fill_parent">
-    	<TextView android:layout_width="70dip"
-        			android:layout_height="wrap_content"
-        			android:layout_gravity="center_vertical"
-        			android:layout_marginLeft="10dip"
-        			android:textColor="#FFFFFF"
-        			android:textAppearance="?android:attr/textAppearanceMedium"
-	        		android:text="END" 
-    	    />
-		<EditText android:id="@+id/edit_End"
-    	     		android:layout_width="wrap_content"
-        			android:layout_height="wrap_content"
-        			android:layout_weight="1"
-        			android:layout_marginLeft="10dip"
-        			android:layout_marginRight="10dip"
-        			android:textColor="#FFFFFF"
-        			android:textAppearance="?android:attr/textAppearanceMedium"
-        			android:inputType="numberDecimal"
-    	    />
-	</LinearLayout>	
 </LinearLayout>

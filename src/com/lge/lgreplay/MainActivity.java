@@ -3,8 +3,6 @@ package com.lge.lgreplay;
 
 import java.io.File;
 import java.util.LinkedList;
-import java.util.zip.Inflater;
-
 import com.lge.lgreplay.event.Event;
 import com.lge.lgreplay.parser.RepParser;
 
@@ -23,7 +21,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -155,10 +152,18 @@ public class MainActivity extends Activity {
     	startText.setText(dateFormat(startTime));
     	endText.setText(dateFormat(endTime));
     	
-    	final EditText editStart = (EditText)layout.findViewById(R.id.edit_Start);
-    	final EditText editEnd = (EditText)layout.findViewById(R.id.edit_End);
-    	editStart.setHint(dateFormat(startTime));
-    	editEnd.setHint(dateFormat(endTime));
+    	final EditText editMonth = (EditText)layout.findViewById(R.id.edit_month);
+    	final EditText editMonthDay = (EditText)layout.findViewById(R.id.edit_monthday);
+    	final EditText editHour = (EditText)layout.findViewById(R.id.edit_hour);
+    	final EditText editMin = (EditText)layout.findViewById(R.id.edit_min);
+    	final EditText editSec = (EditText)layout.findViewById(R.id.edit_sec);
+    	final EditText editMil = (EditText)layout.findViewById(R.id.edit_mil);
+    	editMonth.setText(dateFormat(startTime.month));
+    	editMonthDay.setText(dateFormat(startTime.monthDay));
+    	editHour.setText(dateFormat(startTime.hour));
+    	editMin.setText(dateFormat(startTime.minute));
+    	editSec.setText(dateFormat(startTime.second));
+    	editMil.setText(dateFormat(startTime.millis));
     	    	
     	AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Set Playing Time");
@@ -166,7 +171,10 @@ public class MainActivity extends Activity {
 
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
-				// Do something with value!
+				// set time
+				Toast.makeText(MainActivity.this, "Edit Time : " 
+ 				+ editMonth.getText() + "-" + editMonthDay.getText() + " " +  editHour.getText() + ":" + editMin.getText() + ":"
+ 				+ editSec.getText() + "." + editMil.getText(), Toast.LENGTH_SHORT).show();
 			}
 		});
 		
@@ -220,5 +228,9 @@ public class MainActivity extends Activity {
     public String dateFormat(TimeInfo time){
     	return String.format("[%02d-%02d %02d:%02d:%02d.%03d]",
     			time.month, time.monthDay, time.hour, time.minute, time.second, time.millis);
+    }
+    
+    public String dateFormat(int time){
+    	return String.format("%02d", time);
     }
 }
