@@ -3,6 +3,7 @@ package com.lge.lgreplay;
 
 import java.io.File;
 import java.util.LinkedList;
+
 import com.lge.lgreplay.event.Event;
 import com.lge.lgreplay.parser.RepParser;
 
@@ -172,9 +173,19 @@ public class MainActivity extends Activity {
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				// set time
+				// toast.. ex) 01-27 10:20:24.463
 				Toast.makeText(MainActivity.this, "Edit Time : " 
- 				+ editMonth.getText() + "-" + editMonthDay.getText() + " " +  editHour.getText() + ":" + editMin.getText() + ":"
- 				+ editSec.getText() + "." + editMil.getText(), Toast.LENGTH_SHORT).show();
+						+ editMonth.getText() + "-" + editMonthDay.getText() + " " +  editHour.getText() + ":" + editMin.getText() + ":"
+						+ editSec.getText() + "." + editMil.getText(), Toast.LENGTH_SHORT).show();
+				
+				// edit time
+				TimeInfo editTime = new TimeInfo();
+				editTime.set(Integer.parseInt(editMil.getText().toString()), Integer.parseInt(editSec.getText().toString()),
+						Integer.parseInt(editMin.getText().toString()),Integer.parseInt(editHour.getText().toString()),
+						Integer.parseInt(editMonthDay.getText().toString()),Integer.parseInt(editMonth.getText().toString()));
+				
+				// replayList edit
+				editReplayList(editTime);
 			}
 		});
 		
@@ -225,12 +236,20 @@ public class MainActivity extends Activity {
         }
     };
     
-    public String dateFormat(TimeInfo time){
+    public String dateFormat(TimeInfo time) {
     	return String.format("[%02d-%02d %02d:%02d:%02d.%03d]",
     			time.month, time.monthDay, time.hour, time.minute, time.second, time.millis);
     }
     
-    public String dateFormat(int time){
+    public String dateFormat(int time) {
     	return String.format("%02d", time);
+    }
+    
+    private void editReplayList(TimeInfo newtime) {
+    	//change linked-list start point
+    	LinkedList<Event> tempList = new LinkedList<Event>();
+    	tempList = (LinkedList)mReplayList.clone();
+    	
+    	mReplayService.setReplayList(tempList);
     }
 }
