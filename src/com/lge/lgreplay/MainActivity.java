@@ -3,6 +3,7 @@ package com.lge.lgreplay;
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 import com.lge.lgreplay.event.Event;
 import com.lge.lgreplay.parser.RepParser;
@@ -18,6 +19,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Environment;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +31,8 @@ import android.widget.Toast;
 import ar.com.daidalos.afiledialog.*;
 
 public class MainActivity extends Activity {
+	static final boolean debug = false;
+	
     private boolean mEnableReplayPanel = false;
 
     private Button mOpenReplayFileButton;
@@ -245,11 +249,23 @@ public class MainActivity extends Activity {
     	return String.format("%02d", time);
     }
     
-    private void editReplayList(TimeInfo newtime) {
+    private void editReplayList(TimeInfo newTime) {
     	//change linked-list start point
     	LinkedList<Event> tempList = new LinkedList<Event>();
-    	tempList = (LinkedList)mReplayList.clone();
+    	ListIterator<Event> listIterator = mReplayList.listIterator();
+
+    	while(listIterator.hasNext()) {
+    		Event nextEvent = listIterator.next();
+    		if(Time.compare(nextEvent.getTime() , newTime) >= 0) {
+    			tempList.add(nextEvent);
+    		}
+    	}
     	
+    	if (debug) {
+	    	for(int i = 0; i < tempList.size(); i++) {
+	    		System.out.println(dateFormat(tempList.get(i).getTime()));
+	    	}
+    	}
     	mReplayService.setReplayList(tempList);
     }
 }
