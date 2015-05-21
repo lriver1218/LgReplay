@@ -17,7 +17,7 @@ public class InputEventParser implements EventParser
     static final boolean isSWKey = true;    //sw key model (has navi bar)
 
     static final String TOUCH_DOWN_KEYWORD = "[Touch] 1 finger pressed";
-    static final String TOUCH_UP_KEYWORD = "[Touch] touch_release[ ] ";    
+    static final String TOUCH_UP_KEYWORD = "[Touch] touch_release[ ]";
     static final String KEY_KEYWORD = "PhoneWindowManagerEx: interceptKeyTq";
     static final String ORIENTATION_KEYWORD = "InputReader: Device reconfigured: ";
     static final String ACTIVITY_KEYWORD = "ActivityManager: START u0 {";
@@ -99,14 +99,16 @@ public class InputEventParser implements EventParser
         String x = "0";
         String y = "0";
 
-        if (logLine.contains(TOUCH_DOWN_KEYWORD)) {
+        if (logLine.contains(TOUCH_DOWN_KEYWORD)) {            
             String infoStr[] = logLine.split("/");
-            String infoStr2[] = infoStr[1].split("(\\] \\[|\\[|\\]|<|>)");
+            String infoStr2[] = infoStr[1].split("]");
+            String infoStr3[] = infoStr[1].split("finger pressed");
+            String infoStr4[] = infoStr3[1].split("(\\[|\\]|<|>)");
 
-            x = infoStr2[5].trim();
-            y = infoStr2[7].trim();
+            x = infoStr4[3].trim();
+            y = infoStr4[5].trim();
 
-            Info info =  new TouchInfo(infoStr2[3].trim(), "down", x, y);
+            Info info =  new TouchInfo(infoStr4[1].trim(), "down", x, y);
             event.logFormattedTime = infoStr2[0].trim();
             event.info = info;            
 
@@ -116,14 +118,16 @@ public class InputEventParser implements EventParser
             }*/
             //String out = "[" + infoStr2[0].trim() + "][IE][Touch][" + infoStr2[3] + "|down|" + infoStr2[5] + "|"  + infoStr2[7] + "]";
             //System.out.println(out);
-        } else if (logLine.contains(TOUCH_UP_KEYWORD)) {
+        } else if (logLine.contains(TOUCH_UP_KEYWORD)) {            
             String infoStr[] = logLine.split("/");
-            String infoStr2[] = infoStr[1].split("(\\] \\[|\\[|\\]|<|>)");
+            String infoStr2[] = infoStr[1].split("]");
+            String infoStr3[] = infoStr[1].split("touch_release");
+            String infoStr4[] = infoStr3[1].split("(\\[|\\]|<|>)");
 
-            x = infoStr2[7].trim();
-            y = infoStr2[9].trim();
+            x = infoStr4[5].trim();
+            y = infoStr4[7].trim();
 
-            Info info =  new TouchInfo(infoStr2[5].trim(), "up", x, y);
+            Info info =  new TouchInfo(infoStr4[3].trim(), "up", x, y);
             event.logFormattedTime = infoStr2[0].trim();
             event.info = info;
 
@@ -132,7 +136,7 @@ public class InputEventParser implements EventParser
                 System.out.println(i + "<" + infoStr2[i] + ">");
             }*/
             //String out = "[" + infoStr2[0] + "][IE][Touch][" + infoStr2[5] + "|up|" + infoStr2[7] + "|"  + infoStr2[9] + "]";
-            //System.out.println(out);
+            //System.out.println(event);
         }
 
         //check the right number for x, y value
