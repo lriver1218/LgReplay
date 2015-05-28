@@ -30,6 +30,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import ar.com.daidalos.afiledialog.*;
 
+import android.os.Handler;
+import android.app.ProgressDialog;
+import android.os.Message;
+
 public class MainActivity extends Activity {
 	static final boolean debug = false;
 	
@@ -45,6 +49,12 @@ public class MainActivity extends Activity {
     private ReplayService mReplayService;
 
     private LinkedList<Event> mReplayList = new LinkedList<Event>();
+
+    public Context mContext;
+
+    MyHandler myHandler = new MyHandler();
+    ProgressDialog progressDialog;
+    ProgressThread progressThread;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -82,13 +92,15 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
-        initViews();
+        initViews();      
 
         mRepParser = new RepParser();
         doBindService();
     }
 
     private void initViews() {
+    	mContext = this;   	
+
         mOpenReplayFileButton = (Button) findViewById(R.id.open_replay_file);
         mOpenReplayFileButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -229,8 +241,17 @@ public class MainActivity extends Activity {
             Toast.makeText(MainActivity.this, "File selected: " + file.getName(), Toast.LENGTH_SHORT)
                     .show();
 
-            mReplayList = mRepParser.parseFileToList(file);
-            mReplayService.setReplayList(mReplayList);
+            progressDialog = new ProgressDialog(mContext);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setTitle("Loading replay file ...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
+            progressThread = new ProgressThread(file);
+            progressThread.start();
+
+            //mReplayList = mRepParser.parseFileToList(file, progressDialog);
+            //mReplayService.setReplayList(mReplayList);
         }
 
         public void onFileSelected(Dialog source, File folder, String name) {
@@ -267,5 +288,25 @@ public class MainActivity extends Activity {
 	    	}
     	}
     	mReplayService.setReplayList(tempList);
+    }
+
+    class ProgressThread extends Thread {
+    	File file;
+    	public ProgressThread (File file) {
+            this.file = file;
+        }
+
+    	public void run() {
+            mReplayList = mRepParser.parseFileToList(file, progressDialog);
+            mReplayService.setReplayList(mReplayList);    		
+            myHandler.sendEmptyMessage(0);
+    	}
+    }
+
+    class MyHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+    	}
     }
 }

@@ -28,7 +28,7 @@ public class RepParser {
     static final String ORIENTATION_KEYWORD = "[IE][Orientation]";
     static final String ACTIVITY_KEYWORD = "[IE][Activity]";
 
-    public LinkedList<Event> parseFileToList(File file) {
+    public LinkedList<Event> parseFileToList(File file, ProgressDialog progressDialog) {
         LinkedList<Event> list = new LinkedList<Event>();
 
         /*Log.d(TAG, "called parseFileToList");
@@ -36,21 +36,27 @@ public class RepParser {
         File [] files = new File[1];
         files[0] = file;
         parsingTask.execute(files);
-        */        
+        */
 
         FileReader in = null; 
 
         try {
+        	    long size = file.length();
+
             BufferedReader br =  new BufferedReader(in = new FileReader(file));
             String line;
-
-            while ((line = br.readLine()) != null) {
+            long leng = 0;
+            while ((line = br.readLine()) != null) {            	
+                leng += line.length();
                 Event event = null;
                 event = parse(line);
                 if (event != null) {
                     list.add(event);
                 }
-            }
+                double loadRate = (double)leng/(double)size;                
+                progressDialog.setProgress((int)(loadRate*100));
+            }            
+            progressDialog.setProgress(100);            
             in.close();
         } catch( IOException e){}
         
@@ -133,12 +139,12 @@ public class RepParser {
         }
         x = Integer.valueOf(infoStr2[2]);
         y = Integer.valueOf(infoStr2[3]);
-        
+
         if (infoStr2[1].equals("down"))  {
             action = EventTouch.ACTION_DOWN;
         } else if (infoStr2[1].equals("up"))  {
             action = EventTouch.ACTION_UP;
-        }        
+        }
 
         if (debug) {
             Log.d(TAG, "TouchEvent time:" + time +" x:" + x + " y:" + y + " action:" + action);
