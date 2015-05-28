@@ -8,8 +8,8 @@ public class LGReplayMaker {
     public LGReplayMaker() {        
     }
 
-    public static void main(String[] args) {        
-        System.out.println("Starting LGReplayMaker !");
+    public static void main(String[] args) {
+        System.out.println("LGReplayMaker is started !");
 
         LogExtractor logExtractor = new LogExtractor();
 
@@ -17,6 +17,7 @@ public class LGReplayMaker {
         logReader.read();
 
         RepWriter repWriter = new RepWriter();
-        repWriter.write(logExtractor.getEventTreeMap());        
+        repWriter.write(logExtractor.getEventTreeMap());
+        System.out.println("-End-");
     }    
 }

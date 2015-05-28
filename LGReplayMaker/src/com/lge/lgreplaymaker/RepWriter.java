@@ -17,8 +17,7 @@ public class RepWriter
     public RepWriter() {
     }
 
-    public void write(TreeMap <LocalDateTime, Event>  eventTreeMap) {
-        System.out.println("Writing REP file...");
+    public void write(TreeMap <LocalDateTime, Event>  eventTreeMap) {        
         try {
             repFile = makeRepFile(REP_FILE_NAME);
 
@@ -31,6 +30,7 @@ public class RepWriter
                 //System.out.println(eventTreeMap.get(time));
             }
 
+            System.out.println("Replay file is created.");
             repFile.close();
         } catch(IOException e){
             System.out.println(e);

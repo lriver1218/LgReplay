@@ -105,17 +105,18 @@ public class InputEventParser implements EventParser
             String infoStr3[] = infoStr[1].split("finger pressed");
             String infoStr4[] = infoStr3[1].split("(\\[|\\]|<|>)");
 
-            x = infoStr4[3].trim();
-            y = infoStr4[5].trim();
+            try {
+                x = infoStr4[3].trim();
+                y = infoStr4[5].trim();
+                Info info =  new TouchInfo(infoStr4[1].trim(), "down", x, y);
+                event.logFormattedTime = infoStr2[0].trim();
+                event.info = info;
+            } catch (Exception e) {
+                //System.out.println(" logLine : " + logLine);
+                //System.out.println(e);
+                return null;
+            }
 
-            Info info =  new TouchInfo(infoStr4[1].trim(), "down", x, y);
-            event.logFormattedTime = infoStr2[0].trim();
-            event.info = info;            
-
-            /*for (int i = 0; i < infoStr2.length ; i++) {
-                infoStr2[i] = infoStr2[i].trim();
-                System.out.println(i + "<" + infoStr2[i] + ">");
-            }*/
             //String out = "[" + infoStr2[0].trim() + "][IE][Touch][" + infoStr2[3] + "|down|" + infoStr2[5] + "|"  + infoStr2[7] + "]";
             //System.out.println(out);
         } else if (logLine.contains(TOUCH_UP_KEYWORD)) {            
@@ -123,13 +124,18 @@ public class InputEventParser implements EventParser
             String infoStr2[] = infoStr[1].split("]");
             String infoStr3[] = infoStr[1].split("touch_release");
             String infoStr4[] = infoStr3[1].split("(\\[|\\]|<|>)");
+            try {
+                x = infoStr4[5].trim();
+                y = infoStr4[7].trim();
 
-            x = infoStr4[5].trim();
-            y = infoStr4[7].trim();
-
-            Info info =  new TouchInfo(infoStr4[3].trim(), "up", x, y);
-            event.logFormattedTime = infoStr2[0].trim();
-            event.info = info;
+                Info info =  new TouchInfo(infoStr4[3].trim(), "up", x, y);
+                event.logFormattedTime = infoStr2[0].trim();
+                event.info = info;
+            } catch (Exception e) {
+                //System.out.println(" logLine : " + logLine);
+                //System.out.println(e);
+                return null;
+            }
 
             /*for (int i = 0; i < infoStr2.length ; i++) {
                 infoStr2[i] = infoStr2[i].trim();
