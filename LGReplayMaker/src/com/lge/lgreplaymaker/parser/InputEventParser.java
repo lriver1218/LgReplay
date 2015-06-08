@@ -9,6 +9,9 @@ import java.lang.String;
 import java.lang.Object;
 import java.util.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.awt.Point;
+
 
 public class InputEventParser implements EventParser
 {
@@ -21,10 +24,13 @@ public class InputEventParser implements EventParser
     static final String KEY_KEYWORD = "PhoneWindowManagerEx: interceptKeyTq";
     static final String ORIENTATION_KEYWORD = "InputReader: Device reconfigured: ";
     static final String ACTIVITY_KEYWORD = "ActivityManager: START u0 {";
+    static final String NEW_TOUCH_KEYWORD = "ViewRoot's touch history";
 
     TreeMap <LocalDateTime, Event>  eventTreeMap;   //for test
 
     HashMap <String, Integer> skipKeyMap;
+
+    private boolean hasNewTouch = false;
 
     public InputEventParser() {
         if (isSWKey) {
@@ -68,10 +74,8 @@ public class InputEventParser implements EventParser
 
     public Event parse(String logLine) {
         Event event = null;
-
-        if (logLine.contains(TOUCH_DOWN_KEYWORD)) {
-            event = parseTouchEvent(logLine);
-        } else if (logLine.contains(TOUCH_UP_KEYWORD)) {
+    
+        if (!hasNewTouch && (logLine.contains(TOUCH_DOWN_KEYWORD) || logLine.contains(TOUCH_UP_KEYWORD))) {
             event = parseTouchEvent(logLine);
         } else if (logLine.contains(KEY_KEYWORD)) {
             event = parseKeyEvent(logLine);
@@ -79,7 +83,10 @@ public class InputEventParser implements EventParser
             event = parseOrientationEvent(logLine);
         } else if (logLine.contains(ACTIVITY_KEYWORD)) {
             event = parseActivityEvent(logLine);
-        } 
+        } else if (logLine.contains(NEW_TOUCH_KEYWORD)) {
+            event = parseNewTouchEvent(logLine);
+            hasNewTouch = true;
+        }
 
         if (debug && (event != null)) { //for Test
             System.out.println(event.toString());            
@@ -165,6 +172,70 @@ log:             <6>[ 1303.600001 / 01-27 10:20:24.503] [Touch] touch_release[ ]
 //--------------------------------------------------------------------------------------------------------------
 */
     }
+
+    
+    private Event parseNewTouchEvent(String logLine) {
+            Event event = new InputEvent();
+            String x = "0";
+            String y = "0";
+            ArrayList <Point> movedPoints = null;            
+    
+            if (logLine.contains(NEW_TOUCH_KEYWORD)) {
+                String time = logLine.substring(0, 18);
+
+                String actionStr[] = logLine.split("(action=|\\,)");
+                String xStr[] = logLine.split("( rawX=|\\,)");
+                String yStr[] = logLine.split("( rawY=|\\,|\\})"); 
+
+                try { 
+                    actionStr[1] = actionStr[1].trim();
+                    x = xStr[3].trim();
+                    y = yStr[4].trim();
+
+                    if (logLine.contains("(") && logLine.contains(")")) {
+                        movedPoints = new ArrayList <Point> ();
+                        String pointsStr[] = logLine.split("(\\(|\\))");
+                        String pointsStr2[] = pointsStr[1].split("\\|");
+
+                        for (String str : pointsStr2) {
+                            String pointStr[] = str.split(",");
+                            int movedX = Integer.valueOf(pointStr[0].trim());
+                            int movedY = Integer.valueOf(pointStr[1].trim());
+                            Point p = new Point(movedX, movedY);
+                            movedPoints.add(p);
+                        }
+                    }
+
+                    Info info =  new TouchInfo("0", actionStr[1] , x, y, movedPoints);
+                    event.logFormattedTime = time.trim();
+                    event.info = info;
+                } catch (Exception e) {
+                    //System.out.println(" logLine : " + logLine);
+                    //System.out.println(e);
+                    return null;
+                }
+    
+                //String out = "[" + infoStr2[0].trim() + "][IE][Touch][" + infoStr2[3] + "|down|" + infoStr2[5] + "|"  + infoStr2[7] + "]";
+                //System.out.println(event);
+            }
+    
+            //check the right number for x, y value
+            try {
+                if ((Integer.valueOf(x) == null) || (Integer.valueOf(y) == null)) {                
+                    return null;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+    
+            return event;
+    /*
+    //--------------------------------------------------------------------------------------------------------------
+    // 06-04 11:03:26.890 I       3636     ViewRootImpl    ViewRoot's touch history { action=down, downTime=1346233, rawX=952, rawY=1849}
+    //06-04 11:03:27.049 I       3636     ViewRootImpl    ViewRoot's touch history { action=up, downTime=1346233, rawX=7, rawY=1495, (679,1756|473,1660|7,1495)}
+    //--------------------------------------------------------------------------------------------------------------
+    */
+        }
 
     private Event parseKeyEvent(String logLine) {
         Event event = new InputEvent();

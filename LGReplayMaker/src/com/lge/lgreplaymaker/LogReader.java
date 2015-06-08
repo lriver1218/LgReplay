@@ -5,7 +5,7 @@ import java.util.*;
 
 public class LogReader
 {
-    String [] logTypes = {KERNEL_LOG, SYSTEM_LOG, MAIN_LOG, EVENT_LOG};
+    String [] logTypes = {SYSTEM_LOG, KERNEL_LOG, MAIN_LOG, EVENT_LOG};
 
     LogExtractor logExtractor = null;
     
