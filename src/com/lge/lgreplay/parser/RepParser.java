@@ -19,6 +19,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.ArrayList;
+import android.graphics.Point;
+
 public class RepParser {
     static final String TAG = "RepParser";
     static final boolean debug = false;
@@ -128,14 +131,15 @@ public class RepParser {
     private Event parseTouchEvent(String logLine) {
         int x, y, action = 0;
         TimeInfo time;
+        ArrayList <Point> movedPoints = null;
 
         String infoStr[] = logLine.split("\\[IE\\]\\[Touch\\]\\[");
         time = parseTime(infoStr[0]);
 
-        String infoStr2[] = infoStr[1].split("(\\[|\\||\\])");
+        String infoStr2[] = infoStr[1].split("(\\[|\\||\\]|\\()");
 
         for (int i = 0; i < infoStr2.length ; i++) {
-                infoStr2[i] = infoStr2[i].trim();
+                infoStr2[i] = infoStr2[i].trim();                
         }
         x = Integer.valueOf(infoStr2[2]);
         y = Integer.valueOf(infoStr2[3]);
@@ -146,11 +150,30 @@ public class RepParser {
             action = EventTouch.ACTION_UP;
         }
 
+        if (logLine.contains("(") && logLine.contains(")")) {
+            movedPoints = new ArrayList <Point> ();
+            String pointsStr[] = logLine.split("(\\(|\\))");
+            String pointsStr2[] = pointsStr[1].split("\\|");
+
+            for (String str : pointsStr2) {
+                String pointStr[] = str.split(",");
+                int movedX = Integer.valueOf(pointStr[0].trim());
+                int movedY = Integer.valueOf(pointStr[1].trim());                
+                Point p = new Point(movedX, movedY);
+                movedPoints.add(p);
+            }
+        }
+
         if (debug) {
             Log.d(TAG, "TouchEvent time:" + time +" x:" + x + " y:" + y + " action:" + action);
         }
 
-        Event event = new EventTouch(x, y, action, time);
+        Event event = null;
+        if (movedPoints != null) {
+            event = new EventTouch(x, y, action, time, movedPoints);
+        } else {
+            event = new EventTouch(x, y, action, time);
+        }
 
         return event;
     }
